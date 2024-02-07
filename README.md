@@ -1,1 +1,1 @@
-# # 自用openwrt
+# 自用openwrt
