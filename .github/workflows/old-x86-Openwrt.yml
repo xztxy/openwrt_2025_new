@@ -168,7 +168,8 @@ jobs:
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
         cd $OPENWRT_PATH/bin/targets/*/*
-        rm -rf packages *.buildinfo *.manifest *kernel.bin *rootfs.img *rootfs.img.gz profiles.json sha256sums
+        tar -zcf openwrt-x86-64-generic-squashfs-combined-efi.img.tar.gz openwrt-x86-64-generic-squashfs-combined-efi.img
+        rm -rf packages *.buildinfo *.manifest *kernel.bin *rootfs.img *rootfs.img.gz profiles.json sha256sums *efi.img *efi.img.gz
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
         
@@ -176,10 +177,8 @@ jobs:
       uses: actions/upload-artifact@main
       if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
-        #name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        #path: ${{ env.FIRMWARE }}
-        name: x86_64_OpenWrt_firmware
-        path: $OPENWRT_PATH/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined-efi.img
+        name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        path: ${{ env.FIRMWARE }}
 
     - name: 生成发布标签
       id: tag
