@@ -13,7 +13,7 @@ rm -rf feeds/luci/themes/luci-theme-argon
 # 删除英文版netdata
 #rm -rf feeds/luci/applications/luci-app-netdata
 # 删除低版本golang
-rm -rf feeds/packages/lang/golang
+#rm -rf feeds/packages/lang/golang
 
 ##### Git稀疏克隆
 # 参数1是分支名, 参数2是仓库地址, 参数3是子目录，同一个仓库下载多个文件夹直接在后面跟文件名或路径，空格分开
@@ -27,7 +27,7 @@ function git_sparse_clone() {
 }
 
 ##### 添加新版本golang
-git clone --depth=1 -b 22.x https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
+#git clone --depth=1 -b 22.x https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
 
 ##### Themes
 # 拉取argon主题
