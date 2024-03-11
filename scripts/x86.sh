@@ -14,6 +14,11 @@ rm -rf feeds/luci/themes/luci-theme-argon
 rm -rf feeds/luci/applications/luci-app-netdata
 # 删除低版本golang
 rm -rf feeds/packages/lang/golang
+# 删除低版本mosdns
+rm -rf feeds/packages/net/mosdns
+rm -rf feeds/luci/applications/luci-app-mosdns
+# 删除低版本smartdns
+rm -rf feeds/packages/net/smartdns
 
 ##### Git稀疏克隆
 # 参数1是分支名, 参数2是仓库地址, 参数3是子目录，同一个仓库下载多个文件夹直接在后面跟文件名或路径，空格分开
@@ -46,6 +51,11 @@ git clone --depth=1 https://github.com/sirpdboy/luci-app-autotimeset package/luc
 git clone --depth=1 https://github.com/sirpdboy/luci-app-eqosplus package/luci-app-eqosplus
 # 添加管控过滤,访问限制
 git_sparse_clone Lede https://github.com/281677160/openwrt-package luci-app-control-weburl luci-app-control-webrestriction
+# 添加MosDNS
+git clone --depth=1 https://github.com/sbwml/luci-app-mosdns package/luci-app-mosdns
+# 添加SmartDNS
+git clone --depth=1 -b lede https://github.com/pymumu/luci-app-smartdns package/luci-app-smartdns
+git clone --depth=1 https://github.com/pymumu/openwrt-smartdns package/smartdns
 # 添加adguardhome,poweroff
 git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-poweroff
 # 添加ddns-go
