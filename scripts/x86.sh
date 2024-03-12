@@ -15,6 +15,8 @@ rm -rf feeds/luci/applications/luci-app-netdata
 # 删除低版本golang
 rm -rf feeds/packages/lang/golang
 # 删除低版本mosdns
+rm -rf feeds/packages/net/v2ray-geodata
+rm -rf feeds/packages/utils/v2dat
 rm -rf feeds/packages/net/mosdns
 rm -rf feeds/luci/applications/luci-app-mosdns
 # 删除低版本smartdns
@@ -52,7 +54,8 @@ git clone --depth=1 https://github.com/sirpdboy/luci-app-eqosplus package/luci-a
 # 添加管控过滤,访问限制
 git_sparse_clone Lede https://github.com/281677160/openwrt-package luci-app-control-weburl luci-app-control-webrestriction
 # 添加MosDNS
-git clone --depth=1 https://github.com/sbwml/luci-app-mosdns package/luci-app-mosdns
+git clone --depth=1 -b v5 https://github.com/sbwml/luci-app-mosdns package/mosdns
+git clone --depth=1 https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 # 添加SmartDNS
 git clone --depth=1 -b lede https://github.com/pymumu/luci-app-smartdns package/luci-app-smartdns
 git clone --depth=1 https://github.com/pymumu/openwrt-smartdns package/smartdns
