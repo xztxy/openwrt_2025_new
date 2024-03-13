@@ -39,8 +39,9 @@ git clone --depth=1 -b 22.x https://github.com/sbwml/packages_lang_golang feeds/
 ##### Themes
 # 拉取argon主题
 git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
-# 拉取sirpdboy主题
-#git clone --depth=1 https://github.com/sirpdboy/luci-theme-opentopd package/luci-theme-opentopd
+# 拉取酷猫主题
+#git clone --depth=1 https://github.com/sirpdboy/luci-theme-kucat package/luci-theme-kucat
+#git clone --depth=1 https://github.com/sirpdboy/luci-app-advancedplus package/luci-app-advancedplus
 
 ##### 添加额外插件
 # 拉取中文版netdata
