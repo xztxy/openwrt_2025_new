@@ -40,8 +40,8 @@ git clone --depth=1 -b 22.x https://github.com/sbwml/packages_lang_golang feeds/
 # 拉取argon主题
 git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
 # 拉取酷猫主题
-#git clone --depth=1 -b main https://github.com/sirpdboy/luci-theme-kucat package/luci-theme-kucat
-#git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-advancedplus package/luci-app-advancedplus
+git clone --depth=1 -b main https://github.com/sirpdboy/luci-theme-kucat package/luci-theme-kucat
+git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-advancedplus package/luci-app-advancedplus
 
 ##### 添加额外插件
 # 拉取中文版netdata
