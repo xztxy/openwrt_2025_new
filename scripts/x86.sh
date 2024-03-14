@@ -42,7 +42,6 @@ git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon packa
 # 拉取酷猫主题
 git clone --depth=1 -b main https://github.com/sirpdboy/luci-theme-kucat package/luci-theme-kucat
 
-
 ##### 添加额外插件
 # 拉取中文版netdata
 git clone --depth=1 -b master https://github.com/sirpdboy/luci-app-netdata package/luci-app-netdata
