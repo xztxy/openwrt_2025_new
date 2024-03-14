@@ -41,15 +41,14 @@ git clone --depth=1 -b 22.x https://github.com/sbwml/packages_lang_golang feeds/
 git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
 # 拉取酷猫主题
 git clone --depth=1 -b main https://github.com/sirpdboy/luci-theme-kucat package/luci-theme-kucat
-git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-advancedplus package/luci-app-advancedplus
 
 ##### 添加额外插件
 # 拉取中文版netdata
 #git clone --depth=1 -b master https://github.com/sirpdboy/luci-app-netdata package/luci-app-netdata
 # 添加Lucky
 #git clone --depth=1 https://github.com/sirpdboy/luci-app-lucky.git package/lucky
-# 添加系统高级设置
-git clone --depth=1 https://github.com/sirpdboy/luci-app-advanced package/luci-app-advanced
+# 添加系统高级设置加强版
+git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-advancedplus package/luci-app-advancedplus
 # 拉取定时设置
 #git clone --depth=1 https://github.com/sirpdboy/luci-app-autotimeset package/luci-app-autotimeset
 # eqosplus定时限速
