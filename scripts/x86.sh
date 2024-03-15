@@ -46,7 +46,9 @@ git clone --depth=1 -b main https://github.com/sirpdboy/luci-theme-kucat package
 # 拉取中文版netdata
 git clone --depth=1 -b master https://github.com/sirpdboy/luci-app-netdata package/luci-app-netdata
 # 添加Lucky
-git clone --depth=1 https://github.com/sirpdboy/luci-app-lucky.git package/lucky
+git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-lucky.git package/lucky
+# 添加设备关机功能
+git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-poweroffdevice package/luci-app-poweroffdevice
 # 添加系统高级设置加强版
 git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-advancedplus package/luci-app-advancedplus
 # 拉取定时设置
@@ -61,8 +63,8 @@ git clone --depth=1 https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 # 添加SmartDNS
 git clone --depth=1 -b lede https://github.com/pymumu/luci-app-smartdns package/luci-app-smartdns
 git clone --depth=1 https://github.com/pymumu/openwrt-smartdns package/smartdns
-# 添加adguardhome,poweroff
-git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-poweroff
+# 添加adguardhome
+git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome
 # 添加ddns-go
 git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddns-go
 # 添加istore
