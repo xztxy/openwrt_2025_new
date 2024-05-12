@@ -7,7 +7,7 @@ sed -i 's/192.168.1.1/192.168.100.252/g' package/base-files/files/bin/config_gen
 ########### 设置密码为空（可选） ###########
 sed -i 's@.*CYXluq4wUazHjmCDBCqXF*@#&@g' package/lean/default-settings/files/zzz-default-settings
 
-##### 移除要替换的包
+###### 移除要替换的包
 # 删除老argon
 rm -rf feeds/luci/themes/luci-theme-argon
 # 删除英文版netdata
@@ -22,7 +22,7 @@ rm -rf feeds/packages/lang/golang
 # 删除低版本smartdns
 #rm -rf feeds/packages/net/smartdns
 
-##### Git稀疏克隆
+###### Git稀疏克隆
 # 参数1是分支名, 参数2是仓库地址, 参数3是子目录，同一个仓库下载多个文件夹直接在后面跟文件名或路径，空格分开
 function git_sparse_clone() {
   branch="$1" repourl="$2" && shift 2
@@ -33,7 +33,7 @@ function git_sparse_clone() {
   cd .. && rm -rf $repodir
 }
 
-##### 添加新版本golang
+###### 添加新版本golang
 git clone --depth=1 -b 22.x https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
 
 ##### Themes
@@ -42,7 +42,7 @@ git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon packa
 # 拉取酷猫主题
 git clone --depth=1 -b main https://github.com/sirpdboy/luci-theme-kucat package/luci-theme-kucat
 
-##### 添加额外插件
+###### 添加额外插件
 # 拉取中文版netdata
 #git clone --depth=1 -b master https://github.com/sirpdboy/luci-app-netdata package/luci-app-netdata
 # 添加Lucky
@@ -76,13 +76,13 @@ git_sparse_clone main https://github.com/linkease/istore luci
 #git clone --depth=1 https://github.com/jerrykuku/lua-maxminddb package/lua-maxminddb
 #git clone --depth=1 https://github.com/free-diy/luci-app-vssr package/luci-app-vssr
 
-# 科学上网插件
+##### 科学上网插件
 git clone --depth=1 -b master https://github.com/fw876/helloworld package/luci-app-ssr-plus
 git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall-packages package/openwrt-passwall
 git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall package/luci-app-passwall
 git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall2 package/luci-app-passwall2
 git_sparse_clone master https://github.com/vernesong/OpenClash luci-app-openclash
 
-# 设备关机功能
+##### 设备关机功能
 curl -fsSL  https://raw.githubusercontent.com/sirpdboy/other/master/patch/poweroff/poweroff.htm > ./feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_system/poweroff.htm
 curl -fsSL  https://raw.githubusercontent.com/sirpdboy/other/master/patch/poweroff/system.lua > ./feeds/luci/modules/luci-mod-admin-full/luasrc/controller/admin/system.lua
