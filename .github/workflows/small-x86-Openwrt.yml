@@ -163,8 +163,7 @@ jobs:
       run: |
         cd $OPENWRT_PATH/bin/targets/*/*
         cat sha256sums
-        tar -zcf openwrt-x86-64-generic-squashfs-combined-efi.img.tar.gz openwrt-x86-64-generic-squashfs-combined-efi.img
-        rm -rf packages *.buildinfo *.manifest *kernel.bin *rootfs.img *rootfs.img.gz profiles.json sha256sums *efi.img *efi.img.gz
+        rm -rf packages *.buildinfo *.manifest *kernel.bin *rootfs.img.gz  profiles.json sha256sums
         echo "FIRMWARE_PATH=$PWD" >> $GITHUB_ENV
 
     - name: Upload Firmware To Artifact
