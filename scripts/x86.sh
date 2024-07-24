@@ -64,7 +64,7 @@ git clone --depth=1 https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 git clone --depth=1 -b lede https://github.com/pymumu/luci-app-smartdns package/luci-app-smartdns
 git clone --depth=1 https://github.com/pymumu/openwrt-smartdns package/smartdns
 # 添加adguardhome,bypass
-git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-bypass
+git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-bypass lua-maxminddb
 # 添加ddns-go
 git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddns-go
 # 添加istore
