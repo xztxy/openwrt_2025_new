@@ -68,7 +68,7 @@ git clone --depth=1 -b main https://github.com/free-diy/packages_ruby feeds/pack
 # 添加adguardhome
 #git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome
 # 添加bypass，文件管理助手
-git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass lua-maxminddb luci-app-fileassistant
+git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass
 # 添加ddns-go
 #git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddns-go
 # 设备关机功能
