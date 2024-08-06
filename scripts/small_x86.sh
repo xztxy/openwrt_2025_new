@@ -9,7 +9,7 @@ sed -i 's@.*CYXluq4wUazHjmCDBCqXF*@#&@g' package/lean/default-settings/files/zzz
 
 ###### 移除要替换的包
 # 删除老argon
-rm -rf feeds/luci/themes/luci-theme-argon
+#rm -rf feeds/luci/themes/luci-theme-argon
 # 删除英文版netdata
 #rm -rf feeds/luci/applications/luci-app-netdata
 # 删除低版本golang
@@ -21,6 +21,8 @@ rm -rf feeds/luci/themes/luci-theme-argon
 #rm -rf feeds/luci/applications/luci-app-mosdns
 # 删除低版本smartdns
 #rm -rf feeds/packages/net/smartdns
+
+rm -rf feeds/packages/lang/ruby
 
 ###### Git稀疏克隆
 # 参数1是分支名, 参数2是仓库地址, 参数3是子目录，同一个仓库下载多个文件夹直接在后面跟文件名或路径，空格分开
@@ -35,10 +37,10 @@ function git_sparse_clone() {
 
 ###### 添加新版本golang
 #git clone --depth=1 -b 22.x https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
-
+git clone --depth=1 -b main https://github.com/free-diy/packages_ruby feeds/packages/lang/ruby
 ##### Themes
 # 拉取argon主题
-git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
+#git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
 # 拉取酷猫主题
 #git clone --depth=1 -b main https://github.com/sirpdboy/luci-theme-kucat package/luci-theme-kucat
 
@@ -48,7 +50,7 @@ git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon packa
 # 添加Lucky
 #git clone --depth=1 https://github.com/sirpdboy/luci-app-lucky.git package/lucky
 # 添加系统高级设置加强版
-git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-advancedplus package/luci-app-advancedplus
+#git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-advancedplus package/luci-app-advancedplus
 # 拉取定时设置
 #git clone --depth=1 https://github.com/sirpdboy/luci-app-autotimeset package/luci-app-autotimeset
 # eqosplus定时限速
@@ -82,10 +84,10 @@ git_sparse_clone main https://github.com/linkease/istore luci
 
 ##### 科学上网插件
 git clone --depth=1 -b master https://github.com/fw876/helloworld package/luci-app-ssr-plus
-git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall-packages package/openwrt-passwall
-git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall package/luci-app-passwall
+#git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall-packages package/openwrt-passwall
+#git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall package/luci-app-passwall
 git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall2 package/luci-app-passwall2
-git_sparse_clone master https://github.com/vernesong/OpenClash luci-app-openclash
+#git_sparse_clone master https://github.com/vernesong/OpenClash luci-app-openclash
 
 ##### 设备关机功能
 #curl -fsSL  https://raw.githubusercontent.com/sirpdboy/other/master/patch/poweroff/poweroff.htm > ./feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_system/poweroff.htm
