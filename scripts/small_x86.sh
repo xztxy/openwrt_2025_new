@@ -13,7 +13,7 @@ rm -rf feeds/luci/themes/luci-theme-argon
 # 删除英文版netdata
 #rm -rf feeds/luci/applications/luci-app-netdata
 # 删除低版本golang
-rm -rf feeds/packages/lang/golang
+#rm -rf feeds/packages/lang/golang
 # 删除低版本mosdns
 #rm -rf feeds/packages/net/v2ray-geodata
 #rm -rf feeds/packages/utils/v2dat
@@ -34,7 +34,7 @@ function git_sparse_clone() {
 }
 
 ###### 添加新版本golang
-git clone --depth=1 -b 22.x https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
+#git clone --depth=1 -b 22.x https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
 
 ##### Themes
 # 拉取argon主题
