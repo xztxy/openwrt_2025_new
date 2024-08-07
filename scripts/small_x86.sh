@@ -68,7 +68,7 @@ git clone --depth=1 -b main https://github.com/free-diy/packages_ruby feeds/pack
 # 添加adguardhome
 #git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome
 # 添加bypass，文件管理助手
-git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass
+#git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass
 # 添加ddns-go
 #git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddns-go
 # 设备关机功能
@@ -82,13 +82,9 @@ git_sparse_clone main https://github.com/linkease/istore luci
 #git clone --depth=1 https://github.com/jerrykuku/lua-maxminddb package/lua-maxminddb
 #git clone --depth=1 https://github.com/free-diy/luci-app-vssr package/luci-app-vssr
 
-##### 科学上网插件
-git clone --depth=1 https://github.com/fw876/helloworld.git package/helloworld
+# 科学上网插件
+git clone --depth=1 -b master https://github.com/fw876/helloworld package/luci-app-ssr-plus
 #git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall-packages package/openwrt-passwall
 #git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall package/luci-app-passwall
-git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall2 package/luci-app-passwall2
+#git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall2 package/luci-app-passwall2
 #git_sparse_clone master https://github.com/vernesong/OpenClash luci-app-openclash
-
-##### 设备关机功能
-#curl -fsSL  https://raw.githubusercontent.com/sirpdboy/other/master/patch/poweroff/poweroff.htm > ./feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_system/poweroff.htm
-#curl -fsSL  https://raw.githubusercontent.com/sirpdboy/other/master/patch/poweroff/system.lua > ./feeds/luci/modules/luci-mod-admin-full/luasrc/controller/admin/system.lua
