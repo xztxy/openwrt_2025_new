@@ -68,7 +68,7 @@ git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-advancedplus pa
 # 添加adguardhome
 #git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome
 # 添加bypass
-git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass lua-maxminddb
+#git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass lua-maxminddb
 # 添加ddns-go
 #git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddns-go
 # 设备关机功能
