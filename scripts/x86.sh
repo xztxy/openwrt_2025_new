@@ -40,6 +40,9 @@ function git_sparse_clone() {
 ##### Themes
 # 拉取argon主题
 #git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
+#git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-app-argon-config package/luci-app-argon-config
+git clone --depth=1 -b master https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
+git clone --depth=1 -b master https://github.com/jerrykuku/luci-app-argon-config package/luci-app-argon-config
 # 拉取酷猫主题
 #git clone --depth=1 -b main https://github.com/sirpdboy/luci-theme-kucat package/luci-theme-kucat
 
@@ -75,9 +78,6 @@ git_sparse_clone main https://github.com/linkease/istore-ui app-store-ui
 git_sparse_clone main https://github.com/linkease/istore luci
 # 添加应用管理
 #git clone --depth=1 -b master https://github.com/destan19/OpenAppFilter package/OpenAppFilter
-# 添加vssr
-#git clone --depth=1 https://github.com/jerrykuku/lua-maxminddb package/lua-maxminddb
-#git clone --depth=1 https://github.com/free-diy/luci-app-vssr package/luci-app-vssr
 
 # 科学上网插件
 git clone --depth=1 -b master https://github.com/fw876/helloworld package/luci-app-ssr-plus
@@ -85,3 +85,5 @@ git clone --depth=1 -b master https://github.com/fw876/helloworld package/luci-a
 #git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall package/luci-app-passwall
 #git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall2 package/luci-app-passwall2
 #git_sparse_clone master https://github.com/vernesong/OpenClash luci-app-openclash
+#git clone --depth=1 https://github.com/jerrykuku/lua-maxminddb package/lua-maxminddb
+#git clone --depth=1 https://github.com/free-diy/luci-app-vssr package/luci-app-vssr
