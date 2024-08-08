@@ -10,6 +10,7 @@ sed -i 's/192.168.1.1/192.168.100.252/g' package/base-files/files/bin/config_gen
 ###### 移除要替换的包
 # 删除老argon
 rm -rf feeds/luci/themes/luci-theme-argon
+rm -rf feeds/luci/applications/luci-app-argon-config
 # 删除英文版netdata
 #rm -rf feeds/luci/applications/luci-app-netdata
 # 删除低版本golang
