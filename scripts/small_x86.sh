@@ -9,7 +9,7 @@ sed -i 's/192.168.1.1/192.168.100.252/g' package/base-files/files/bin/config_gen
 
 ###### 移除要替换的包
 # 删除老argon
-#rm -rf feeds/luci/themes/luci-theme-argon
+rm -rf feeds/luci/themes/luci-theme-argon
 # 删除英文版netdata
 #rm -rf feeds/luci/applications/luci-app-netdata
 # 删除低版本golang
@@ -40,7 +40,7 @@ function git_sparse_clone() {
 #git clone --depth=1 -b main https://github.com/free-diy/packages_ruby feeds/packages/lang/ruby
 ##### Themes
 # 拉取argon主题
-#git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
+git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
 # 拉取酷猫主题
 #git clone --depth=1 -b main https://github.com/sirpdboy/luci-theme-kucat package/luci-theme-kucat
 
