@@ -3,7 +3,6 @@ name: small-x86-Openwrt
 on:
   workflow_dispatch:
   schedule:
-    - cron: 1 1 1 1 *
 
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
