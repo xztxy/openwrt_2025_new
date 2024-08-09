@@ -1,4 +1,4 @@
-name: old-x86-Openwrt
+name: immortalwrt-master-x86-Openwrt
 
 on:
   workflow_dispatch:
@@ -6,18 +6,18 @@ on:
     - cron: 0 0 1 * *
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
+  REPO_URL: https://github.com/immortalwrt/immortalwrt
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: configs/x86.config
+  CONFIG_FILE: configs/immortalwrt_x86.config
   DIY_P1_SH: diy-part1.sh
-  DIY_P2_SH: scripts/x86.sh
+  DIY_P2_SH: scripts/immortalwrt_x86.sh
   CLASH_KERNEL: amd64
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: false
-  FIRMWARE_TAG: X86_64
+  FIRMWARE_TAG: immortalwrt-master-x86
   TZ: Asia/Shanghai
 
 jobs:
@@ -79,7 +79,7 @@ jobs:
       working-directory: /workdir
       run: |
         df -hT $PWD
-        git clone --depth=1 $REPO_URL -b $REPO_BRANCH openwrt
+        git clone -b $REPO_BRANCH --single-branch --filter=blob:none $REPO_URL openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
         cd openwrt
         echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
