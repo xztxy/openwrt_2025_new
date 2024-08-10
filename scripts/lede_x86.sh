@@ -68,7 +68,9 @@ git clone --depth=1 https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 #git clone --depth=1 -b lede https://github.com/pymumu/luci-app-smartdns package/luci-app-smartdns
 #git clone --depth=1 https://github.com/pymumu/openwrt-smartdns package/smartdns
 # 添加adguardhome,bypass，文件管理助手
-git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-bypass lua-maxminddb luci-app-fileassistant
+git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-bypass luci-app-fileassistant luci-app-timecontrol
+# 添加lua-maxminddb
+git_sparse_clone master https://github.com/kenzok8/openwrt-packages lua-maxminddb
 # 添加ddns-go
 git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddns-go
 # 设备关机功能
@@ -79,7 +81,6 @@ git_sparse_clone main https://github.com/linkease/istore luci
 # 添加应用管理
 #git clone --depth=1 -b master https://github.com/destan19/OpenAppFilter package/OpenAppFilter
 # 添加vssr
-#git clone --depth=1 https://github.com/jerrykuku/lua-maxminddb package/lua-maxminddb
 #git clone --depth=1 https://github.com/free-diy/luci-app-vssr package/luci-app-vssr
 
 ##### 科学上网插件
