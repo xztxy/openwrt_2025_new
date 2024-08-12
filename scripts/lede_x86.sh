@@ -59,22 +59,20 @@ git clone --depth=1 https://github.com/sirpdboy/luci-app-autotimeset package/luc
 git clone --depth=1 https://github.com/sirpdboy/luci-app-eqosplus package/luci-app-eqosplus
 # 家长控制
 git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-parentcontrol package/luci-app-parentcontrol
-# 添加管控过滤,访问限制
-git_sparse_clone Lede https://github.com/281677160/openwrt-package luci-app-control-weburl luci-app-control-webrestriction
+# 添加ddns-go
+git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddns-go
+# 设备关机功能
+git clone --depth=1 https://github.com/sirpdboy/luci-app-poweroffdevice package/luci-app-poweroffdevice
 # 添加MosDNS
 git clone --depth=1 -b v5 https://github.com/sbwml/luci-app-mosdns package/mosdns
 git clone --depth=1 https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 # 添加SmartDNS
 #git clone --depth=1 -b lede https://github.com/pymumu/luci-app-smartdns package/luci-app-smartdns
 #git clone --depth=1 https://github.com/pymumu/openwrt-smartdns package/smartdns
-# 添加adguardhome,bypass，文件管理助手等
-git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-bypass luci-app-fileassistant luci-app-filebrowser luci-app-timecontrol luci-app-control-timewol
+# 添加adguardhome,bypass，管控过滤,访问限制，文件管理助手等
+git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-bypass luci-app-fileassistant luci-app-filebrowser luci-app-timecontrol luci-app-control-timewol luci-app-control-weburl luci-app-control-webrestriction
 # 添加lua-maxminddb
 git_sparse_clone master https://github.com/kenzok8/openwrt-packages lua-maxminddb
-# 添加ddns-go
-git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddns-go
-# 设备关机功能
-git clone --depth=1 https://github.com/sirpdboy/luci-app-poweroffdevice package/luci-app-poweroffdevice
 # 添加istore
 git_sparse_clone main https://github.com/linkease/istore-ui app-store-ui
 git_sparse_clone main https://github.com/linkease/istore luci
