@@ -11,6 +11,8 @@ sed -i 's/192.168.1.1/192.168.100.252/g' package/base-files/files/bin/config_gen
 # 删除老argon
 rm -rf feeds/luci/themes/luci-theme-argon
 rm -rf feeds/luci/applications/luci-app-argon-config
+# 删除ddns-go
+rm -rf feeds/luci/applications/luci-app-ddns-go
 # 删除英文版netdata
 rm -rf feeds/luci/applications/luci-app-netdata
 # 删除低版本golang
@@ -68,7 +70,7 @@ git clone --depth=1 https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 #git clone --depth=1 -b lede https://github.com/pymumu/luci-app-smartdns package/luci-app-smartdns
 #git clone --depth=1 https://github.com/pymumu/openwrt-smartdns package/smartdns
 # 添加adguardhome,bypass,guest-wifi,timecontrol,control-timewol，管控过滤,访问限制
-git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-bypass luci-app-guest-wifi luci-app-control-weburl luci-app-control-webrestriction
+git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-bypass luci-app-guest-wifi luci-app-control-weburl luci-app-control-webrestriction luci-app-ddns-go luci-app-homeproxy
 # 添加easymesh
 git_sparse_clone master https://github.com/kenzok8/openwrt-packages luci-app-easymesh
 # 添加ddns-go
