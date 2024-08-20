@@ -62,7 +62,7 @@ git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-parentcontrol p
 # 设备关机功能
 git clone --depth=1 https://github.com/sirpdboy/luci-app-poweroffdevice package/luci-app-poweroffdevice
 # 添加MosDNS
-#git clone --depth=1 -b v5 https://github.com/sbwml/luci-app-mosdns package/mosdns
+git clone --depth=1 -b v5 https://github.com/sbwml/luci-app-mosdns package/mosdns
 #git clone --depth=1 https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 # 添加SmartDNS
 #git clone --depth=1 -b lede https://github.com/pymumu/luci-app-smartdns package/luci-app-smartdns
