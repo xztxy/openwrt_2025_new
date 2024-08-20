@@ -11,17 +11,15 @@ sed -i 's/192.168.1.1/192.168.100.252/g' package/base-files/files/bin/config_gen
 # 删除老argon
 rm -rf feeds/luci/themes/luci-theme-argon
 rm -rf feeds/luci/applications/luci-app-argon-config
-# 删除ddns-go
-rm -rf feeds/luci/applications/luci-app-ddns-go
 # 删除英文版netdata
 rm -rf feeds/luci/applications/luci-app-netdata
 # 删除低版本golang
 #rm -rf feeds/packages/lang/golang
 # 删除低版本mosdns
-rm -rf feeds/packages/net/v2ray-geodata
-rm -rf feeds/packages/utils/v2dat
-rm -rf feeds/packages/net/mosdns
-rm -rf feeds/luci/applications/luci-app-mosdns
+#rm -rf feeds/packages/net/v2ray-geodata
+#rm -rf feeds/packages/utils/v2dat
+#rm -rf feeds/packages/net/mosdns
+#rm -rf feeds/luci/applications/luci-app-mosdns
 # 删除低版本smartdns
 #rm -rf feeds/packages/net/smartdns
 
@@ -63,18 +61,16 @@ git clone --depth=1 https://github.com/sirpdboy/luci-app-eqosplus package/luci-a
 git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-parentcontrol package/luci-app-parentcontrol
 # 设备关机功能
 git clone --depth=1 https://github.com/sirpdboy/luci-app-poweroffdevice package/luci-app-poweroffdevice
-# 添加ddns-go
-git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddns-go
 # 添加MosDNS
-git clone --depth=1 -b v5 https://github.com/sbwml/luci-app-mosdns package/mosdns
-git clone --depth=1 https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
+#git clone --depth=1 -b v5 https://github.com/sbwml/luci-app-mosdns package/mosdns
+#git clone --depth=1 https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 # 添加SmartDNS
 #git clone --depth=1 -b lede https://github.com/pymumu/luci-app-smartdns package/luci-app-smartdns
 #git clone --depth=1 https://github.com/pymumu/openwrt-smartdns package/smartdns
-# 添加adguardhome,bypass,guest-wifi,timecontrol,control-timewol，管控过滤,访问限制
-git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-bypass luci-app-guest-wifi luci-app-control-weburl luci-app-control-webrestriction
+# 添加adguardhome,bypass,timecontrol,control-timewol，管控过滤,访问限制
+git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-bypass luci-app-control-weburl luci-app-control-webrestriction
 # 添加easymesh
-git_sparse_clone master https://github.com/kenzok8/openwrt-packages luci-app-easymesh
+#git_sparse_clone master https://github.com/kenzok8/openwrt-packages luci-app-easymesh
 # 添加ddns-go
 #git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddns-go
 # 添加istore
