@@ -25,9 +25,6 @@ function git_sparse_clone() {
   cd .. && rm -rf $repodir
 }
 
-###### 添加新版本golang
-#git clone --depth=1 -b 22.x https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
-
 ###### Themes
 # 拉取argon主题
 git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
