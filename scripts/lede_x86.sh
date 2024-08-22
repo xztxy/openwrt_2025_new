@@ -52,7 +52,7 @@ git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddns-go
 # 设备关机功能
 git clone --depth=1 https://github.com/sirpdboy/luci-app-poweroffdevice package/luci-app-poweroffdevice
 # 添加adguardhome,bypass，管控过滤,访问限制，文件管理助手等
-git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-bypass luci-app-fileassistant luci-app-filebrowser luci-app-timecontrol luci-app-control-timewol luci-app-control-weburl luci-app-control-webrestriction
+git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-bypass luci-app-fileassistant luci-app-filebrowser luci-app-timecontrol luci-app-control-timewol luci-app-control-weburl luci-app-control-webrestriction luci-app-homeproxy
 # 添加lua-maxminddb
 git_sparse_clone master https://github.com/kenzok8/openwrt-packages lua-maxminddb
 # 添加istore
