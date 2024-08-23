@@ -42,7 +42,8 @@ git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-parentcontrol p
 # 设备关机功能
 git clone --depth=1 https://github.com/sirpdboy/luci-app-poweroffdevice package/luci-app-poweroffdevice
 # 添加adguardhome,bypass,timecontrol,control-timewol，管控过滤,访问限制
-git_sparse_clone main https://github.com/kenzok8/small-package luci-app-adguardhome luci-app-bypass luci-app-control-weburl luci-app-control-webrestriction
+#luci-app-adguardhome 
+git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass luci-app-control-weburl luci-app-control-webrestriction
 # 添加istore
 git_sparse_clone main https://github.com/linkease/istore-ui app-store-ui
 git_sparse_clone main https://github.com/linkease/istore luci
