@@ -8,8 +8,8 @@ env:
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: configs/lede_x86.config
-  DIY_P1_SH: scripts/lede_1_x86.sh
-  DIY_P2_SH: scripts/lede_2_x86.sh
+  DIY_P1_SH: scripts/sh/lede_diy-part1
+  DIY_P2_SH: scripts/lede_x86
   CLASH_KERNEL: amd64
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false
