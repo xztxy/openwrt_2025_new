@@ -48,3 +48,5 @@ git clone --depth=1 -b master https://github.com/fw876/helloworld package/luci-a
 git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall-packages package/openwrt-passwall
 git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall package/luci-app-passwall
 git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall2 package/luci-app-passwall2
+# 添加应用管理
+#git clone --depth=1 -b master https://github.com/destan19/OpenAppFilter package/OpenAppFilter
