@@ -35,15 +35,11 @@ git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-lucky.git packa
 git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-advancedplus package/luci-app-advancedplus
 # 拉取定时设置
 git clone --depth=1 https://github.com/sirpdboy/luci-app-autotimeset package/luci-app-autotimeset
-# eqosplus定时限速
-git clone --depth=1 https://github.com/sirpdboy/luci-app-eqosplus package/luci-app-eqosplus
-# 家长控制
-#git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-parentcontrol package/luci-app-parentcontrol
 # 设备关机功能
 git clone --depth=1 https://github.com/sirpdboy/luci-app-poweroffdevice package/luci-app-poweroffdevice
-# 添加adguardhome,bypass,timecontrol,control-timewol，管控过滤,访问限制
+# 添加adguardhome,bypass
 # luci-app-adguardhome
-git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass luci-app-control-weburl luci-app-control-webrestriction
+git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass
 # 添加istore
 git_sparse_clone main https://github.com/linkease/istore-ui app-store-ui
 git_sparse_clone main https://github.com/linkease/istore luci
