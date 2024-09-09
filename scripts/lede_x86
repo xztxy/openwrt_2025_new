@@ -44,16 +44,16 @@ git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-advancedplus pa
 # 拉取定时设置
 git clone --depth=1 https://github.com/sirpdboy/luci-app-autotimeset package/luci-app-autotimeset
 # eqosplus定时限速
-git clone --depth=1 https://github.com/sirpdboy/luci-app-eqosplus package/luci-app-eqosplus
+#git clone --depth=1 https://github.com/sirpdboy/luci-app-eqosplus package/luci-app-eqosplus
 # 家长控制
 #git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-parentcontrol package/luci-app-parentcontrol
 # 添加ddns-go
-git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddns-go
+#git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddns-go
 # 设备关机功能
 git clone --depth=1 https://github.com/sirpdboy/luci-app-poweroffdevice package/luci-app-poweroffdevice
 # 添加adguardhome,bypass，管控过滤,访问限制，文件管理助手等
 #luci-app-adguardhome luci-app-homeproxy
-git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass luci-app-fileassistant luci-app-filebrowser luci-app-timecontrol luci-app-control-timewol luci-app-control-weburl luci-app-control-webrestriction
+git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass luci-app-fileassistant luci-app-filebrowser luci-app-timecontrol luci-app-control-timewol
 # 添加lua-maxminddb
 git_sparse_clone master https://github.com/kenzok8/openwrt-packages lua-maxminddb
 # 添加istore
