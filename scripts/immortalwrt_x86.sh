@@ -40,7 +40,7 @@ git clone --depth=1 https://github.com/sirpdboy/luci-app-poweroffdevice package/
 # 添加adguardhome,bypass
 # luci-app-adguardhome
 #git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass
-git clone --depth=1 -b main https://github.com/morytyann/OpenWrt-mihomo packages/OpenWrt-mihomo
+git clone --depth=1 -b main https://github.com/morytyann/OpenWrt-mihomo package/OpenWrt-mihomo
 # 添加istore
 git_sparse_clone main https://github.com/linkease/istore-ui app-store-ui
 git_sparse_clone main https://github.com/linkease/istore luci
