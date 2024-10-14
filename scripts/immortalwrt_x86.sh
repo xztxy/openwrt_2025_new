@@ -37,8 +37,9 @@ git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-advancedplus pa
 git clone --depth=1 https://github.com/sirpdboy/luci-app-autotimeset package/luci-app-autotimeset
 # 设备关机功能
 git clone --depth=1 https://github.com/sirpdboy/luci-app-poweroffdevice package/luci-app-poweroffdevice
-# 添加adguardhome,bypass
+# 添加adguardhome
 # luci-app-adguardhome
+# 添加mihome
 #git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass
 git clone --depth=1 -b main https://github.com/morytyann/OpenWrt-mihomo package/OpenWrt-mihomo
 # 添加istore
