@@ -46,7 +46,7 @@ git clone --depth=1 -b main https://github.com/morytyann/OpenWrt-mihomo package/
 git_sparse_clone main https://github.com/linkease/istore-ui app-store-ui
 git_sparse_clone main https://github.com/linkease/istore luci
 # 添加ssrplus
-git clone --depth=1 -b master https://github.com/fw876/helloworld package/luci-app-ssr-plus
+#git clone --depth=1 -b master https://github.com/fw876/helloworld package/luci-app-ssr-plus
 git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall-packages package/openwrt-passwall
 git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall package/luci-app-passwall
 git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall2 package/luci-app-passwall2
