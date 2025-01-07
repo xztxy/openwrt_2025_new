@@ -1,5 +1,4 @@
-name: immortalwrt-x86-Openwrt
-
+name: immortalwrt-23.05-x86
 on:
   workflow_dispatch:
 
