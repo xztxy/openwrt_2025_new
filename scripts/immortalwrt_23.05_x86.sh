@@ -31,8 +31,8 @@ git clone --depth=1 -b master https://github.com/jerrykuku/luci-app-argon-config
 #git clone --depth=1 -b master https://github.com/sirpdboy/luci-app-netdata package/luci-app-netdata
 # 添加Lucky
 git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-lucky.git package/lucky
-# 添加系统高级设置加强版
-git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-advanced package/luci-app-advanced
+# 添加系统高级设置
+git clone --depth=1 -b master https://github.com/sirpdboy/luci-app-advanced package/luci-app-advanced
 # 拉取定时设置
 git clone --depth=1 https://github.com/sirpdboy/luci-app-autotimeset package/luci-app-autotimeset
 # 设备关机功能
