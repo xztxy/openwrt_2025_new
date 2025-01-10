@@ -1,4 +1,4 @@
-# File name: immortalwrt_x86.sh
+# File name: immortalwrt_24.10_x86.sh
 # Description: OpenWrt DIY script part 2 (After Update feeds)
 #
 # Modify default IP
