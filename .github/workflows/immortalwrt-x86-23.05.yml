@@ -168,5 +168,6 @@ jobs:
           **This is OpenWrt Firmware for ${{ env.FIRMWARE_TAG }}**
           ### 📒 固件信息
           - 💻 平台架构: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
+          - ⚙️ 带Docker
           - 🌐 默认地址: 192.168.100.252
           - 🔑 默认密码: 空
