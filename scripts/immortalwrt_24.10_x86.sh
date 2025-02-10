@@ -41,7 +41,7 @@ git clone --depth=1 https://github.com/sirpdboy/luci-app-poweroffdevice package/
 #luci-app-adguardhome luci-app-homeproxy
 #git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass luci-app-fileassistant luci-app-filebrowser luci-app-timecontrol luci-app-control-timewol
 # 添加mihomo
-git clone --depth=1 -b main https://github.com/morytyann/OpenWrt-mihomo package/OpenWrt-mihomo
+git clone --depth=1 -b main https://github.com/nikkinikki-org/OpenWrt-nikki package/OpenWrt-nikki
 # 添加istore
 git_sparse_clone main https://github.com/linkease/istore-ui app-store-ui
 git_sparse_clone main https://github.com/linkease/istore luci
