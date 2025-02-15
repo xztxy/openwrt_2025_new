@@ -13,7 +13,7 @@ env:
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false
   FIRMWARE_RELEASE: true
-  FIRMWARE_TAG: immortalwrt-24.10-x86
+  FIRMWARE_TAG: immortalwrt-24.10-docker-x86
   TZ: Asia/Shanghai
 
 jobs:
