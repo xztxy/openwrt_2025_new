@@ -30,7 +30,7 @@ git clone --depth=1 -b master https://github.com/jerrykuku/luci-app-argon-config
 # 拉取中文版netdata
 #git clone --depth=1 -b master https://github.com/sirpdboy/luci-app-netdata package/luci-app-netdata
 # 添加Lucky
-git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-lucky.git package/lucky
+git clone --depth=1 -b main https://github.com/gdy666/luci-app-lucky package/lucky
 # 添加系统高级设置
 git clone --depth=1 -b master https://github.com/sirpdboy/luci-app-advanced package/luci-app-advanced
 # 拉取定时设置
