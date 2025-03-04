@@ -1,4 +1,4 @@
-name: Update Checker
+name: Update Checker lede
 
 on:
   workflow_dispatch:
