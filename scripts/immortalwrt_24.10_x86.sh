@@ -2,7 +2,7 @@
 # Description: OpenWrt DIY script part 2 (After Update feeds)
 #
 # Modify default IP
-sed -i 's/192.168.1.1/192.168.100.252/g' package/base-files/files/bin/config_generate
+sed -i 's/192.168.1.1/192.168.15.1/g' package/base-files/files/bin/config_generate
 #
 ##### 移除要替换的包
 # 删除老argon
