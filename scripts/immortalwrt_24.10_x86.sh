@@ -52,3 +52,5 @@ git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall packag
 #git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall2 package/luci-app-passwall2
 # 添加应用管理
 #git clone --depth=1 -b master https://github.com/destan19/OpenAppFilter package/OpenAppFilter
+# 添加xwan
+git_sparse_clone master https://github.com/x-wrt/com.x-wrt luci-app-xwan
