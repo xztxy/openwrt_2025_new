@@ -1,6 +1,7 @@
 name: immortalwrt-24.10-x86
 on:
   repository_dispatch:
+      types: [immortalwrt]
   workflow_dispatch:
 #  schedule:
 #    - cron: '0 18 * * 5'
@@ -174,5 +175,5 @@ jobs:
           ### 📒 固件信息
           - 💻 平台架构: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
           - ⚙️ 不带Docker
-          - 🌐 默认地址: 192.168.100.252
+          - 🌐 默认地址: 192.168.15.1
           - 🔑 默认密码: 空
