@@ -44,7 +44,7 @@ jobs:
         sudo -E apt -qq purge azure-cli docker* ghc* zulu* hhvm* llvm* firefox google* dotnet* aspnetcore* powershell openjdk* adoptopenjdk* mysql* php* mongodb* moby* snap* || true -y
         sudo -E apt -qq update -y
         sudo -E apt -qq full-upgrade -y
-        sudo -E apt -qq install $(curl -fsSL https://raw.githubusercontent.com/free-diy/openwrt/main/depends_ubuntu_2204) -y
+        sudo -E apt -qq install $(curl -fsSL https://raw.githubusercontent.com/xztxy/openwrt_2025_new/refs/heads/main/depends_ubuntu_2204) -y
         sudo -E systemctl daemon-reload
         sudo -E apt -qq autoremove --purge -y
         sudo -E apt -qq clean -y
