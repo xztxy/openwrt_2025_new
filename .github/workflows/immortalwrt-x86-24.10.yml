@@ -3,7 +3,6 @@ on:
   repository_dispatch:
       types: [immortalwrt]
   workflow_dispatch:
-run-name: ${{ github.workflow }} - ${{ github.event_name }} - ${{ env.DATE }}
 #  schedule:
 #    - cron: '0 18 * * 5'
 #  watch:
