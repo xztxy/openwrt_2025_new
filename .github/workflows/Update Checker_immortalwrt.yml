@@ -48,7 +48,7 @@ jobs:
       uses: peter-evans/repository-dispatch@main
       with:
         token: ${{ secrets.MY_GITHUB_TOKEN }}
-        event-type: immortalwrt
+        event-type: ${{ env.date1 }}-immortalwrt
 
     - name: 删除workflow工作流
       uses: Mattraks/delete-workflow-runs@main
