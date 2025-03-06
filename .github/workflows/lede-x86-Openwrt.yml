@@ -2,7 +2,8 @@ name: lede-x86-Openwrt
 
 on:
   repository_dispatch:
-      types: [LEDE]
+    types:
+      - '*-LEDE'
   workflow_dispatch:
 
 env:
