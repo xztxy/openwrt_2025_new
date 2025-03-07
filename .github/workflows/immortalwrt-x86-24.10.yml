@@ -152,6 +152,9 @@ jobs:
         cd $OPENWRT_PATH/bin/targets/*/*
         cat sha256sums
         rm -rf packages *.buildinfo *.manifest *kernel.bin *rootfs.img.gz profiles.json
+        for file in *; do
+          mv "$file" "${{ env.FILE_DATE }}_$file"
+        done
         echo "FIRMWARE_PATH=$PWD" >> $GITHUB_ENV
 
     - name: Upload Firmware To Artifact
