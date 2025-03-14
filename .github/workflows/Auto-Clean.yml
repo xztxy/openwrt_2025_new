@@ -45,14 +45,14 @@ jobs:
             exit 1
           fi
           # 从输入中获取保留数量
-          keep_latest=${{ inputs.NUMBER || '6' }}
+          keep_latest=6
           # 遍历每个 Release
           echo "$releases" | jq -c '.[]' | while read release; do
             release_id=$(echo "$release" | jq -r .id)
             assets=$(echo "$release" | jq -r '.assets[] | {id: .id, name: .name, created_at: .created_at}')
             echo "Processing Release ID: $release_id"
             # 按文件类型分组处理
-            for file_pattern in "\\.img\\.gz$" "sha256sums$"; do
+            for file_pattern in '\\.img\\.gz$' 'sha256sums$'; do
               # 筛选并排序文件
               filtered_assets=$(echo "$assets" | jq -s "map(select(.name | test(\"$file_pattern\"))) | sort_by(.created_at) | reverse")
               # 删除多余的文件
