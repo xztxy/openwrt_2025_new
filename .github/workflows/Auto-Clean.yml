@@ -34,7 +34,7 @@ jobs:
       - name: Clean Release Assets
         run: |
           # 获取所有 Releases
-          releases=$(curl -H "Authorization: token ${{ env.GITHUB_TOKEN }}" \
+          releases=$(curl -H "Authorization: token ${{ env.MY_GITHUB_TOKEN }}" \
                           https://api.github.com/repos/${{ github.repository }}/releases)
           echo "$releases" > releases.json
           # 遍历每个 Release
@@ -51,7 +51,7 @@ jobs:
                 asset_id=$(echo "$asset" | jq -r .id)
                 asset_name=$(echo "$asset" | jq -r .name)
                 echo "Deleting asset: $asset_name (ID: $asset_id) in Release ID: $release_id"
-                curl -X DELETE -H "Authorization: token ${{ env.GITHUB_TOKEN }}" \
+                curl -X DELETE -H "Authorization: token ${{ env.MY_GITHUB_TOKEN }}" \
                      https://api.github.com/repos/${{ github.repository }}/releases/assets/$asset_id
               done
             done
