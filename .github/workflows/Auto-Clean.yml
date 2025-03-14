@@ -1,0 +1,58 @@
+name: Auto-Clean
+on:
+  # 自动清理：每 3 天早上 2 点
+  schedule:
+    - cron: '0 2 */3 * *'
+  # 手动清理
+  workflow_dispatch:
+    inputs:
+      NUMBER:
+        description: 'Number of latest releases to keep'
+        default: '6'
+        required: false
+        type: string
+env:
+  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+permissions: write-all
+jobs:
+  auto_clean:
+    runs-on: ubuntu-22.04
+    steps:
+      # 删除旧的 Releases 和 Tags
+      - name: Delete Old Releases
+        uses: dev-drprasad/delete-older-releases@master
+        with:
+          keep_latest: ${{ inputs.NUMBER || '0' }}
+          delete_tags: true
+      # 删除旧的 Workflow Runs
+      - name: Delete Old Workflows
+        uses: Mattraks/delete-workflow-runs@main
+        with:
+          retain_days: 6
+          keep_minimum_runs: 6
+      # 清理 Release 中的文件（保留指定数量的同类型文件）
+      - name: Clean Release Assets
+        run: |
+          # 获取所有 Releases
+          releases=$(curl -H "Authorization: token ${{ env.GITHUB_TOKEN }}" \
+                          https://api.github.com/repos/${{ github.repository }}/releases)
+          echo "$releases" > releases.json
+          # 遍历每个 Release
+          echo "$releases" | jq -c '.[]' | while read release; do
+            release_id=$(echo "$release" | jq -r .id)
+            assets=$(echo "$release" | jq -r '.assets[] | {id: .id, name: .name, created_at: .created_at}')
+            # 按文件类型分组处理
+            for file_pattern in "*.img.gz" "*sha256sums"; do
+              # 筛选并排序文件
+              filtered_assets=$(echo "$assets" | jq -s "map(select(.name | test(\"$file_pattern\"))) | sort_by(.created_at) | reverse")
+              keep_latest=2
+              # 删除多余的文件
+              echo "$filtered_assets" | jq -c ".[$keep_latest:][]" | while read asset; do
+                asset_id=$(echo "$asset" | jq -r .id)
+                asset_name=$(echo "$asset" | jq -r .name)
+                echo "Deleting asset: $asset_name (ID: $asset_id) in Release ID: $release_id"
+                curl -X DELETE -H "Authorization: token ${{ env.GITHUB_TOKEN }}" \
+                     https://api.github.com/repos/${{ github.repository }}/releases/assets/$asset_id
+              done
+            done
+          done
