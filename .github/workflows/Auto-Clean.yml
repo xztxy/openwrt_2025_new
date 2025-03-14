@@ -13,7 +13,9 @@ on:
         type: string
 env:
   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-permissions: write-all
+permissions:
+  contents: write
+  actions: write
 jobs:
   auto_clean:
     runs-on: ubuntu-22.04
@@ -22,7 +24,7 @@ jobs:
       - name: Delete Old Releases
         uses: dev-drprasad/delete-older-releases@master
         with:
-          keep_latest: ${{ inputs.NUMBER || '0' }}
+          keep_latest: ${{ inputs.NUMBER || '6' }}
           delete_tags: true
       # 删除旧的 Workflow Runs
       - name: Delete Old Workflows
@@ -42,24 +44,24 @@ jobs:
             echo "Error: Invalid JSON returned from API"
             exit 1
           fi
+          # 从输入中获取保留数量
+          keep_latest=${{ inputs.NUMBER || '6' }}
           # 遍历每个 Release
           echo "$releases" | jq -c '.[]' | while read release; do
             release_id=$(echo "$release" | jq -r .id)
             assets=$(echo "$release" | jq -r '.assets[] | {id: .id, name: .name, created_at: .created_at}')
             echo "Processing Release ID: $release_id"
             # 按文件类型分组处理
-            for file_pattern in "*.img.gz" "*sha256sums"; do
+            for file_pattern in "\\.img\\.gz$" "sha256sums$"; do
               # 筛选并排序文件
               filtered_assets=$(echo "$assets" | jq -s "map(select(.name | test(\"$file_pattern\"))) | sort_by(.created_at) | reverse")
-              keep_latest=2
               # 删除多余的文件
               echo "$filtered_assets" | jq -c ".[$keep_latest:][]" | while read asset; do
                 asset_id=$(echo "$asset" | jq -r .id)
                 asset_name=$(echo "$asset" | jq -r .name)
                 echo "Deleting asset: $asset_name (ID: $asset_id) in Release ID: $release_id"
                 curl -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
-                     https://api.github.com/repos/xztxy/openwrt_2025_new/releases/assets/$asset_id
+                     https://api.github.com/repos/xztxy/openwrt_2025_new/releases/assets/$asset_id || echo "Failed to delete asset: $asset_name"
               done
             done
           done
-
