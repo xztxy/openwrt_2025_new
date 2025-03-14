@@ -45,7 +45,7 @@ jobs:
             exit 1
           fi
           # 从输入中获取保留数量
-          keep_latest=6
+          keep_latest=2
           # 遍历每个 Release
           echo "$releases" | jq -c '.[]' | while read release; do
             release_id=$(echo "$release" | jq -r .id)
