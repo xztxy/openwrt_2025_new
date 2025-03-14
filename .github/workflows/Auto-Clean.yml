@@ -8,7 +8,7 @@ on:
     inputs:
       NUMBER:
         description: 'Number of latest releases to keep'
-        default: '6'
+        default: '2'
         required: false
         type: string
 env:
@@ -24,7 +24,7 @@ jobs:
       - name: Delete Old Releases
         uses: dev-drprasad/delete-older-releases@master
         with:
-          keep_latest: ${{ inputs.NUMBER || '6' }}
+          keep_latest: ${{ inputs.NUMBER || '2' }}
           delete_tags: true
       # 删除旧的 Workflow Runs
       - name: Delete Old Workflows
