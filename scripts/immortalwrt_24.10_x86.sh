@@ -37,6 +37,7 @@ git clone --depth=1 -b master https://github.com/jerrykuku/luci-theme-argon pack
 git clone --depth=1 -b master https://github.com/jerrykuku/luci-app-argon-config package/luci-app-argon-config
 # 拉取酷猫主题
 git clone --depth=1 -b main https://github.com/sirpdboy/luci-theme-kucat package/luci-theme-kucat
+git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-kucat-config
 #拉取peditx主题
 git clone --depth=1 -b main https://github.com/peditx/luci-theme-peditx package/luci-theme-peditx
 
