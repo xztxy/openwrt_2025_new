@@ -214,5 +214,3 @@ jobs:
           - ${{ env.COMMIT_MESSAGE }}
           - ${{ env.COMMIT_HASH }}
         🌴固件已经编译完成🎈！！！" || true
-        🎉发布地址：${{ env.GITHUB_RELEASE }}
-          " >/dev/null 2>&1 && echo "ok..."
