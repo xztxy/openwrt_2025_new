@@ -196,42 +196,6 @@ jobs:
           - ${{ env.COMMIT_HASH }}
 
 
-    - name: 获取企业微信Token
-      id: get_wechat_token
-      run: |
-        TOKEN=$(curl -s "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=${{ secrets.CORP_ID }}&corpsecret=${{ secrets.CORP_SECRET }}" | jq -r '.access_token')
-        echo "token=$TOKEN" >> $GITHUB_OUTPUT
-    - name: 发送企业微信通知
-      run: |
-        curl "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=${{ steps.get_wechat_token.outputs.token }}" \
-        -H "Content-Type: application/json" \
-        -d '{
-          "touser": "@all",
-          "msgtype": "text",
-          "agentid": ${{ secrets.AGENT_ID }},
-          "text": {
-            "content": "您的${{ env.FIRMWARE_TAG }}固件成功编译完成了！\n\n🎉发布地址：${{ env.GITHUB_RELEASE }}\n\n🌴固件已经编译完成🎈！！！"
-          }
-        }'
-
-    - name: 编译成功信息通知-企业微信
-      if: steps.compile.outcome == 'success' && env.WECHAT_WORK_PUSH == 'true'
-      run: |
-        curl "http://${{ secrets.WECHAT_WORK_URL }}/push?token=${{ secrets.WECHAT_WORK_TOKEN }}&message=\
-        您的${{ env.env.FIRMWARE_TAG }}固件成功编译完成了！%0a%0a\
-          **This is OpenWrt Firmware for ${{ env.FIRMWARE_TAG }}**
-          ### 📒 固件信息
-          - 💻 平台架构: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
-          - 🌐 默认地址: 192.168.15.1
-          - 🔑 默认密码: 空
-          ### 🧊 固件版本
-          - 固件编译前最后一次➦[主源码](${{ env.REPO_URL }})更新记录
-          - ${{ env.COMMIT_AUTHOR }}
-          - ${{ env.COMMIT_DATE }}
-          - ${{ env.COMMIT_MESSAGE }}
-          - ${{ env.COMMIT_HASH }}
-        🌴固件已经编译完成🎈！！！" || true
-
     - name: 编译成功信息通知-Telegram
       if: steps.compile.outcome == 'success' && env.TELEGRAM_BOT == 'true'
       run: |
@@ -250,5 +214,5 @@ jobs:
           - ${{ env.COMMIT_MESSAGE }}
           - ${{ env.COMMIT_HASH }}
         🌴固件已经编译完成🎈！！！" || true
-        🎉 发布地址：${{ env.GITHUB_RELEASE }}
+        🎉发布地址：${{ env.GITHUB_RELEASE }}
           " >/dev/null 2>&1 && echo "ok..."
