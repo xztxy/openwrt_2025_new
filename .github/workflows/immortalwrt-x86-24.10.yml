@@ -22,6 +22,8 @@ env:
   FIRMWARE_RELEASE: true
   FIRMWARE_TAG: immortalwrt-24.10-x86
   TZ: Asia/Shanghai
+  WECHAT_WORK_PUSH: true
+  TELEGRAM_BOT: true
 
 jobs:
   build:
