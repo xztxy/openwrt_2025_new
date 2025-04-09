@@ -48,8 +48,8 @@ git clone --depth=1 -b main https://github.com/peditx/luci-theme-peditx package/
 git clone --depth=1 -b main https://github.com/gdy666/luci-app-lucky package/lucky
 # 添加系统高级设置
 git clone --depth=1 -b master https://github.com/sirpdboy/luci-app-advanced package/luci-app-advanced
-# 拉取定时设置
-git clone --depth=1 https://github.com/sirpdboy/luci-app-autotimeset package/luci-app-autotimeset
+# 拉取taskplan定时设置插件
+git clone --depth=1 https://github.com/sirpdboy/luci-app-taskplan package/luci-app-taskplan
 # 设备关机功能
 git clone --depth=1 https://github.com/sirpdboy/luci-app-poweroffdevice package/luci-app-poweroffdevice
 # 添加adguardhome,bypass，文件管理助手等
