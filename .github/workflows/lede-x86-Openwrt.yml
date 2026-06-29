@@ -211,7 +211,7 @@ jobs:
       if: steps.compile.outcome == 'success' && env.WECHAT_WORK_PUSH == 'true'
       run: |
         curl "http://${{ secrets.WECHAT_WORK_URL }}/push?token=${{ secrets.WECHAT_WORK_TOKEN }}&message=\
-        您的${{ env.env.FIRMWARE_TAG }}固件成功编译完成了！%0a%0a\
+        您的${{ env.FIRMWARE_TAG }}固件成功编译完成了！%0a%0a\
           **This is OpenWrt Firmware for ${{ env.FIRMWARE_TAG }}**
           ### 📒 固件信息
           - 💻 平台架构: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
@@ -230,7 +230,7 @@ jobs:
       run: |
         curl "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=
 
-           您的${{ env.env.FIRMWARE_TAG }}固件成功编译完成了！
+           您的${{ env.FIRMWARE_TAG }}固件成功编译完成了！
           **This is OpenWrt Firmware for ${{ env.FIRMWARE_TAG }}**
           ### 📒 固件信息
           - 💻 平台架构: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
@@ -242,6 +242,5 @@ jobs:
           - ${{ env.COMMIT_DATE }}
           - ${{ env.COMMIT_MESSAGE }}
           - ${{ env.COMMIT_HASH }}
-        🌴固件已经编译完成🎈！！！" || true
-        🎉 发布地址：${{ env.GITHUB_RELEASE }}
-          " >/dev/null 2>&1 && echo "ok..."
+        🌴固件已经编译完成🎈！！！
+🎉 发布地址：${{ env.GITHUB_RELEASE }}" >/dev/null 2>&1 || true
