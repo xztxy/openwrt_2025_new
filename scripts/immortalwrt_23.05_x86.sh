@@ -44,7 +44,7 @@ git clone --depth=1 -b main https://github.com/peditx/luci-theme-peditx package/
 
 ##### 添加额外插件
 # 拉取中文版netdata
-#git clone --depth=1 -b master https://github.com/sirpdboy/luci-app-netdata package/luci-app-netdata
+#git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-netdata package/luci-app-netdata
 # 添加Lucky
 git clone --depth=1 -b main https://github.com/gdy666/luci-app-lucky package/lucky
 # 添加系统高级设置

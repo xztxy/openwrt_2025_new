@@ -85,6 +85,9 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertNotIn(
             "-b main https://github.com/sirpdboy/luci-app-kucat-config", scripts
         )
+        self.assertNotIn(
+            "-b master https://github.com/sirpdboy/luci-app-netdata", scripts
+        )
         self.assertNotIn("github.com/xiaorouji/openwrt-passwall", scripts)
         self.assertIn(
             "github.com/Openwrt-Passwall/openwrt-passwall-packages", scripts
