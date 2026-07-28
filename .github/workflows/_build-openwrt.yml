@@ -116,14 +116,16 @@ jobs:
           device_subtarget="$(sed -n 's/^CONFIG_TARGET_SUBTARGET="\([^"]*\)"/\1/p' "$config_path" | head -n 1)"
           [[ -n "$device_target" && -n "$device_subtarget" ]]
 
-          printf 'OPENWRT_PATH=%s\n' "$PWD" >> "$GITHUB_ENV"
-          printf 'SOURCE_REPO=%s\n' "$source_repo" >> "$GITHUB_ENV"
-          printf 'DEVICE_TARGET=%s\n' "$device_target" >> "$GITHUB_ENV"
-          printf 'DEVICE_SUBTARGET=%s\n' "$device_subtarget" >> "$GITHUB_ENV"
-          printf 'COMMIT_AUTHOR=%s\n' "$(git show -s --format='%an')" >> "$GITHUB_ENV"
-          printf 'COMMIT_DATE=%s\n' "$(git show -s --format='%ci')" >> "$GITHUB_ENV"
-          printf 'COMMIT_MESSAGE=%s\n' "$(git show -s --format='%s')" >> "$GITHUB_ENV"
-          printf 'COMMIT_HASH=%s\n' "$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          {
+            printf 'OPENWRT_PATH=%s\n' "$PWD"
+            printf 'SOURCE_REPO=%s\n' "$source_repo"
+            printf 'DEVICE_TARGET=%s\n' "$device_target"
+            printf 'DEVICE_SUBTARGET=%s\n' "$device_subtarget"
+            printf 'COMMIT_AUTHOR=%s\n' "$(git show -s --format='%an')"
+            printf 'COMMIT_DATE=%s\n' "$(git show -s --format='%ci')"
+            printf 'COMMIT_MESSAGE=%s\n' "$(git show -s --format='%s')"
+            printf 'COMMIT_HASH=%s\n' "$(git rev-parse HEAD)"
+          } >> "$GITHUB_ENV"
 
       - name: Restore build cache
         uses: HiGarfield/cachewrtbuild@3c396d6d42253c392a1c7c2ca996869c3d5b5853

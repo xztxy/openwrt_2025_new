@@ -55,7 +55,7 @@ jobs:
           set -Eeuo pipefail
           gh api --method POST "repos/$GITHUB_REPOSITORY/dispatches" \
             -f event_type="$DISPATCH_EVENT" \
-            -F client_payload[source_commit]="${{ steps.source.outputs.hash }}"
+            -F "client_payload[source_commit]=${{ steps.source.outputs.hash }}"
 
       - name: Report unchanged source
         if: steps.upstream-cache.outputs.cache-hit == 'true' && !inputs.force_build
