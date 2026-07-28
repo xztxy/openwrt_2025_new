@@ -1,67 +1,54 @@
-name: Auto-Clean
+name: Maintenance Cleanup
+
 on:
-  # 自动清理：每 3 天早上 2 点
   schedule:
-    - cron: '0 2 */3 * *'
-  # 手动清理
+    - cron: '0 3 1 * *'
   workflow_dispatch:
     inputs:
-      NUMBER:
-        description: 'Number of latest releases to keep'
-        default: '2'
+      retain_days:
+        description: Delete workflow runs older than this many days
         required: false
+        default: '90'
         type: string
-env:
-  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+      minimum_runs:
+        description: Always retain this many runs per workflow
+        required: false
+        default: '3'
+        type: string
+
 permissions:
-  contents: write
+  contents: read
   actions: write
+
 jobs:
-  auto_clean:
-    runs-on: ubuntu-22.04
+  cleanup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RETAIN_DAYS: ${{ inputs.retain_days || '90' }}
+      MINIMUM_RUNS: ${{ inputs.minimum_runs || '3' }}
+
     steps:
-      # 删除旧的 Releases 和 Tags
-      - name: Delete Old Releases
-        uses: dev-drprasad/delete-older-releases@master
-        with:
-          keep_latest: ${{ inputs.NUMBER || '2' }}
-          delete_tags: true
-      # 删除旧的 Workflow Runs
-      - name: Delete Old Workflows
-        uses: Mattraks/delete-workflow-runs@main
-        with:
-          retain_days: 6
-          keep_minimum_runs: 6
-      # 清理 Release 中的文件（保留指定数量的同类型文件）
-      - name: Clean Release Assets
+      - name: Delete old workflow runs safely
         run: |
-          # 获取所有 Releases
-          releases=$(curl -H "Authorization: token $GITHUB_TOKEN" \
-                          https://api.github.com/repos/xztxy/openwrt_2025_new/releases)
-          echo "$releases" > releases.json
-          # 检查返回的数据是否为有效 JSON
-          if ! echo "$releases" | jq empty; then
-            echo "Error: Invalid JSON returned from API"
-            exit 1
-          fi
-          # 从输入中获取保留数量
-          keep_latest=2
-          # 遍历每个 Release
-          echo "$releases" | jq -c '.[]' | while read release; do
-            release_id=$(echo "$release" | jq -r .id)
-            assets=$(echo "$release" | jq -r '.assets[] | {id: .id, name: .name, created_at: .created_at}')
-            echo "Processing Release ID: $release_id"
-            # 按文件类型分组处理
-            for file_pattern in '\\.img\\.gz$' 'sha256sums$'; do
-              # 筛选并排序文件
-              filtered_assets=$(echo "$assets" | jq -s "map(select(.name | test(\"$file_pattern\"))) | sort_by(.created_at) | reverse")
-              # 删除多余的文件
-              echo "$filtered_assets" | jq -c ".[$keep_latest:][]" | while read asset; do
-                asset_id=$(echo "$asset" | jq -r .id)
-                asset_name=$(echo "$asset" | jq -r .name)
-                echo "Deleting asset: $asset_name (ID: $asset_id) in Release ID: $release_id"
-                curl -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
-                     https://api.github.com/repos/xztxy/openwrt_2025_new/releases/assets/$asset_id || echo "Failed to delete asset: $asset_name"
-              done
-            done
-          done
+          set -Eeuo pipefail
+          [[ "$RETAIN_DAYS" =~ ^[0-9]+$ ]]
+          [[ "$MINIMUM_RUNS" =~ ^[0-9]+$ ]]
+          cutoff_epoch="$(date -u -d "$RETAIN_DAYS days ago" +%s)"
+          declare -A workflow_counts=()
+
+          while IFS=$'\t' read -r run_id workflow_name created_at; do
+            current_count="${workflow_counts[$workflow_name]:-0}"
+            current_count=$((current_count + 1))
+            workflow_counts[$workflow_name]="$current_count"
+
+            created_epoch="$(date -u -d "$created_at" +%s)"
+            if (( current_count > MINIMUM_RUNS && created_epoch < cutoff_epoch )); then
+              echo "Deleting run $run_id from $workflow_name ($created_at)"
+              gh api --method DELETE "repos/$GITHUB_REPOSITORY/actions/runs/$run_id"
+            fi
+          done < <(
+            gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs?per_page=100" \
+              --jq '.workflow_runs[] | [.id, .name, .created_at] | @tsv'
+          )

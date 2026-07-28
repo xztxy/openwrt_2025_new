@@ -1,17 +1,20 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
 # File name: immortalwrt_23.05_x86.sh
 # Description: OpenWrt DIY script part 2 (After Update feeds)
 #
 # Modify default IP
-sed -i 's/192.168.1.1/192.168.15.1/g' package/base-files/files/bin/config_generate
+sed -i 's/192\.168\.1\.1/192.168.15.1/g' package/base-files/files/bin/config_generate
 #
 
 # 修改主机名以及一些显示信息
-sed -i "s/hostname='*.*'/hostname='Momo'/" package/base-files/files/bin/config_generate
-sed -i "s/DISTRIB_ID='*.*'/DISTRIB_ID='OpenWrt'/g" package/base-files/files/etc/openwrt_release
-sed -i "s/DISTRIB_DESCRIPTION='*.*'/DISTRIB_DESCRIPTION='OpenWrt'/g"  package/base-files/files/etc/openwrt_release
+sed -i "s/hostname='[^']*'/hostname='Momo'/" package/base-files/files/bin/config_generate
+sed -i "s/^DISTRIB_ID=.*/DISTRIB_ID='OpenWrt'/" package/base-files/files/etc/openwrt_release
+sed -i "s/^DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION='OpenWrt'/" package/base-files/files/etc/openwrt_release
 # sed -i '/(<%=pcdata(ver.luciversion)%>)/a\      built by Momo' package/lean/autocore/files/x86/index.htm
 echo -n "$(date +'%Y%m%d')" > package/base-files/files/etc/openwrt_version
-curl -fsSL https://raw.githubusercontent.com/xztxy/New_lede_bianyi/refs/heads/main/banner_Momo > package/base-files/files/etc/banner
+curl --fail --silent --show-error --location --retry 3 https://raw.githubusercontent.com/xztxy/New_lede_bianyi/refs/heads/main/banner_Momo > package/base-files/files/etc/banner
 
 ##### 移除要替换的包
 # 删除老argon
