@@ -41,6 +41,13 @@ class WorkflowContractTests(unittest.TestCase):
                 text = (WORKFLOWS / name).read_text(encoding="utf-8")
                 self.assertIn("uses: ./.github/workflows/_build-openwrt.yml", text)
                 self.assertNotIn("runs-on: ubuntu-22.04", text)
+    def test_build_wrappers_pass_explicit_target_metadata(self):
+        for name in BUILD_WRAPPERS:
+            with self.subTest(workflow=name):
+                text = (WORKFLOWS / name).read_text(encoding="utf-8")
+                self.assertIn("target_board: x86", text)
+                self.assertIn("target_subtarget: '64'", text)
+
 
     def test_workflows_do_not_track_mutable_action_branches(self):
         mutable_ref = re.compile(r"uses:\s+[^\s]+@(main|master)(?:\s|$)", re.MULTILINE)
@@ -70,6 +77,20 @@ class WorkflowContractTests(unittest.TestCase):
                 lines = path.read_text(encoding="utf-8").splitlines()
                 self.assertEqual(lines[0], "#!/usr/bin/env bash")
                 self.assertIn("set -Eeuo pipefail", lines[:5])
+    def test_customization_scripts_reference_live_plugin_sources(self):
+        scripts = "\n".join(path.read_text(encoding="utf-8") for path in SHELL_SCRIPTS)
+        self.assertNotIn(
+            "-b main https://github.com/sirpdboy/luci-theme-kucat", scripts
+        )
+        self.assertNotIn(
+            "-b main https://github.com/sirpdboy/luci-app-kucat-config", scripts
+        )
+        self.assertNotIn("github.com/xiaorouji/openwrt-passwall", scripts)
+        self.assertIn(
+            "github.com/Openwrt-Passwall/openwrt-passwall-packages", scripts
+        )
+        self.assertIn("github.com/Openwrt-Passwall/openwrt-passwall", scripts)
+
 
     def test_naiveproxy_remains_enabled_with_modern_toolchain(self):
         config = (ROOT / "configs" / "immortalwrt_24.10_x86.config").read_text(

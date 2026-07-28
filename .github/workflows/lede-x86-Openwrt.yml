@@ -16,6 +16,8 @@ jobs:
     with:
       source_url: https://github.com/coolsnowwolf/lede
       source_branch: master
+      target_board: x86
+      target_subtarget: '64'
       config_file: configs/lede_x86.config
       diy_part1: scripts/sh/lede_diy-part1
       diy_part2: scripts/lede_x86

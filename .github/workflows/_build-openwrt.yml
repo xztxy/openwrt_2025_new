@@ -9,6 +9,12 @@ on:
       source_branch:
         required: true
         type: string
+      target_board:
+        required: true
+        type: string
+      target_subtarget:
+        required: true
+        type: string
       config_file:
         required: true
         type: string
@@ -111,9 +117,8 @@ jobs:
 
           source_repo="${SOURCE_URL##*/}"
           source_repo="${source_repo%.git}"
-          config_path="$GITHUB_WORKSPACE/${{ inputs.config_file }}"
-          device_target="$(sed -n 's/^CONFIG_TARGET_BOARD="\([^"]*\)"/\1/p' "$config_path" | head -n 1)"
-          device_subtarget="$(sed -n 's/^CONFIG_TARGET_SUBTARGET="\([^"]*\)"/\1/p' "$config_path" | head -n 1)"
+          device_target="${{ inputs.target_board }}"
+          device_subtarget="${{ inputs.target_subtarget }}"
           [[ -n "$device_target" && -n "$device_subtarget" ]]
 
           {
