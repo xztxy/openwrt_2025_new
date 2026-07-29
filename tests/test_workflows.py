@@ -117,6 +117,14 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertTrue(notification_steps["Notify WeCom"]["continue-on-error"])
         self.assertTrue(notification_steps["Notify Telegram"]["continue-on-error"])
 
+    def test_immortalwrt_2305_avoids_fileassistant_package_conflict(self):
+        config = (ROOT / "configs" / "immortalwrt_23.05_x86.config").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("CONFIG_PACKAGE_luci-app-advanced=y", config)
+        self.assertNotIn("CONFIG_PACKAGE_luci-app-fileassistant=y", config)
+
+
     def test_naiveproxy_remains_enabled_with_modern_toolchain(self):
         config = (ROOT / "configs" / "immortalwrt_24.10_x86.config").read_text(
             encoding="utf-8"
