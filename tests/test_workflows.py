@@ -101,6 +101,7 @@ class WorkflowContractTests(unittest.TestCase):
             if not line.lstrip().startswith("#")
         )
         self.assertNotIn("luci-app-bypass", active_script_lines)
+        self.assertNotIn("lua-maxminddb", active_script_lines)
 
     def test_notifications_are_best_effort_and_accept_full_wecom_urls(self):
         reusable_text = (WORKFLOWS / "_build-openwrt.yml").read_text(
