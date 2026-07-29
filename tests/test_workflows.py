@@ -126,6 +126,14 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertNotIn("CONFIG_PACKAGE_luci-app-fileassistant=y", config)
 
 
+    def test_lede_disables_autosamba_when_using_samba4(self):
+        config = (ROOT / "configs" / "lede_x86.config").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("CONFIG_PACKAGE_luci-app-samba4=y", config)
+        self.assertIn("# CONFIG_PACKAGE_autosamba is not set", config)
+
+
     def test_naiveproxy_remains_enabled_with_modern_toolchain(self):
         config = (ROOT / "configs" / "immortalwrt_24.10_x86.config").read_text(
             encoding="utf-8"
