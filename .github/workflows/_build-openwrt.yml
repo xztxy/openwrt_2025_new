@@ -252,6 +252,7 @@ jobs:
 
       - name: Notify WeCom
         if: success() && inputs.notify_wechat
+        continue-on-error: true
         env:
           WECHAT_WORK_URL: ${{ secrets.WECHAT_WORK_URL }}
           WECHAT_WORK_TOKEN: ${{ secrets.WECHAT_WORK_TOKEN }}
@@ -263,13 +264,22 @@ jobs:
             exit 0
           fi
           message="${FIRMWARE_TAG} firmware compiled successfully. Release: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/tag/${FIRMWARE_TAG}"
+          wechat_endpoint="${WECHAT_WORK_URL%/}"
+          case "$wechat_endpoint" in
+            http://*|https://*) ;;
+            *) wechat_endpoint="http://${wechat_endpoint}" ;;
+          esac
+          if [[ "$wechat_endpoint" != */push ]]; then
+            wechat_endpoint="${wechat_endpoint}/push"
+          fi
           curl --fail --silent --show-error --retry 3 --get \
-            "http://${WECHAT_WORK_URL}/push" \
+            "$wechat_endpoint" \
             --data-urlencode "token=${WECHAT_WORK_TOKEN}" \
             --data-urlencode "message=${message}"
 
       - name: Notify Telegram
         if: success() && inputs.notify_telegram
+        continue-on-error: true
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

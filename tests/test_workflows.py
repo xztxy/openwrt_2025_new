@@ -95,6 +95,28 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn("github.com/Openwrt-Passwall/openwrt-passwall", scripts)
 
 
+        active_script_lines = "\n".join(
+            line
+            for line in scripts.splitlines()
+            if not line.lstrip().startswith("#")
+        )
+        self.assertNotIn("luci-app-bypass", active_script_lines)
+
+    def test_notifications_are_best_effort_and_accept_full_wecom_urls(self):
+        reusable_text = (WORKFLOWS / "_build-openwrt.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn('"http://${WECHAT_WORK_URL}/push"', reusable_text)
+
+        workflow = yaml.safe_load(reusable_text)
+        notification_steps = {
+            step["name"]: step
+            for step in workflow["jobs"]["build"]["steps"]
+            if step.get("name", "").startswith("Notify ")
+        }
+        self.assertTrue(notification_steps["Notify WeCom"]["continue-on-error"])
+        self.assertTrue(notification_steps["Notify Telegram"]["continue-on-error"])
+
     def test_naiveproxy_remains_enabled_with_modern_toolchain(self):
         config = (ROOT / "configs" / "immortalwrt_24.10_x86.config").read_text(
             encoding="utf-8"
