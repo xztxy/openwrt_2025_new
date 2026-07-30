@@ -69,6 +69,14 @@ class WorkflowContractTests(unittest.TestCase):
                 text = path.read_text(encoding="utf-8")
                 self.assertIsNone(mutable_ref.search(text))
 
+    def test_external_actions_are_pinned_to_commits(self):
+        action_ref = re.compile(r"uses:\s+([^\s]+)@([^\s#]+)")
+        for path in sorted(WORKFLOWS.glob("*.yml")):
+            text = path.read_text(encoding="utf-8")
+            for action, ref in action_ref.findall(text):
+                with self.subTest(path=path.name, action=action):
+                    self.assertRegex(ref, r"^[0-9a-f]{40}$")
+
     def test_workflows_use_scoped_permissions_and_builtin_token(self):
         for path in sorted(WORKFLOWS.glob("*.yml")):
             with self.subTest(path=path.name):

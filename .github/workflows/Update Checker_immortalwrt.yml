@@ -42,7 +42,7 @@ jobs:
 
       - name: Restore upstream state
         id: upstream-cache
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .upstream-state/${{ env.CACHE_SCOPE }}
           key: upstream-${{ env.CACHE_SCOPE }}-${{ steps.source.outputs.hash }}
