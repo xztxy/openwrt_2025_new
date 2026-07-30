@@ -5,12 +5,14 @@ on:
     paths:
       - '.github/workflows/**'
       - 'scripts/**'
+      - 'configs/**'
       - 'depends_ubuntu_2404'
       - 'tests/**'
   pull_request:
     paths:
       - '.github/workflows/**'
       - 'scripts/**'
+      - 'configs/**'
       - 'depends_ubuntu_2404'
       - 'tests/**'
   workflow_dispatch:

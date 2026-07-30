@@ -49,6 +49,19 @@ class WorkflowContractTests(unittest.TestCase):
                 self.assertIn("target_subtarget: '64'", text)
 
 
+    def test_validation_runs_for_every_build_input(self):
+        validate_text = (WORKFLOWS / "validate.yml").read_text(encoding="utf-8")
+        for path in (
+            ".github/workflows/**",
+            "scripts/**",
+            "configs/**",
+            "depends_ubuntu_2404",
+            "tests/**",
+        ):
+            with self.subTest(path=path):
+                self.assertEqual(validate_text.count(f"- '{path}'"), 2)
+
+
     def test_workflows_do_not_track_mutable_action_branches(self):
         mutable_ref = re.compile(r"uses:\s+[^\s]+@(main|master)(?:\s|$)", re.MULTILINE)
         for path in sorted(WORKFLOWS.glob("*.yml")):
