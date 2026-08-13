@@ -124,6 +124,64 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertNotIn("luci-app-bypass", active_script_lines)
         self.assertNotIn("lua-maxminddb", active_script_lines)
 
+    def test_autoupdate_build_contract_uses_owned_zzz_api_channel(self):
+        reusable_text = (WORKFLOWS / "_build-openwrt.yml").read_text(
+            encoding="utf-8"
+        )
+        for required_input in (
+            "autoupdate_source:",
+            "autoupdate_edition:",
+            "autoupdate_tag:",
+        ):
+            self.assertIn(required_input, reusable_text)
+
+        for required_behavior in (
+            "/etc/openwrt_autoupdate",
+            "GITHUB_API=\"zzz_api\"",
+            "CURRENT_FIRMWARE=",
+            "COMPILE_DATE=",
+            "Publish zzz_api update channel",
+            'gh api "repos/$GITHUB_REPOSITORY/releases/tags/$AUTOUPDATE_TAG"',
+        ):
+            self.assertIn(required_behavior, reusable_text)
+
+        expected_channels = {
+            "immortalwrt-x86-23.05.yml": ("Immortalwrt", "23.05", "Update-x86"),
+            "immortalwrt-x86-24.10.yml": ("Immortalwrt", "24.10", "Update-x86"),
+            "immortalwrt-x86-docker-24.10.yml": ("Immortalwrt", "24.10", "Update-x86"),
+            "lede-x86-Openwrt.yml": ("Lede", "23.05", "Update-x86"),
+        }
+        for name, (source, edition, tag) in expected_channels.items():
+            with self.subTest(workflow=name):
+                text = (WORKFLOWS / name).read_text(encoding="utf-8")
+                self.assertIn(f"autoupdate_source: {source}", text)
+                self.assertIn(f"autoupdate_edition: '{edition}'", text)
+                self.assertIn(f"autoupdate_tag: {tag}", text)
+
+    def test_autoupdate_dependencies_are_owned_and_not_numeric_upstream(self):
+        relevant_files = [
+            WORKFLOWS / "_build-openwrt.yml",
+            ROOT / "scripts" / "immortalwrt_23.05_x86.sh",
+            ROOT / "scripts" / "immortalwrt_24.10_x86.sh",
+            ROOT / "scripts" / "lede_x86",
+        ]
+        combined = "\n".join(path.read_text(encoding="utf-8") for path in relevant_files)
+
+        self.assertNotIn("github.com/281677160/", combined)
+        self.assertNotIn("github.com/libntdll/luci-app-autoupdate", combined)
+        self.assertIn("github.com/xztxy/luci-app-autoupdate", combined)
+        self.assertIn("91894e1a82d7cf226fff429a6b880812ad79e03d", combined)
+        self.assertIn('GITHUB_REPOSITORY_URL="https://github.com/$GITHUB_REPOSITORY"', combined)
+
+        for config_name in (
+            "immortalwrt_23.05_x86.config",
+            "immortalwrt_24.10_x86.config",
+            "immortalwrt_24.10_docker_x86.config",
+            "lede_x86.config",
+        ):
+            config = (ROOT / "configs" / config_name).read_text(encoding="utf-8")
+            self.assertIn("CONFIG_PACKAGE_luci-app-autoupdate=y", config)
+
     def test_notifications_are_best_effort_and_accept_full_wecom_urls(self):
         reusable_text = (WORKFLOWS / "_build-openwrt.yml").read_text(
             encoding="utf-8"

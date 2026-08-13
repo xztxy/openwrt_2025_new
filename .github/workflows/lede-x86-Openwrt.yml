@@ -25,6 +25,9 @@ jobs:
       firmware_pattern: '*squashfs-combined*.img.gz'
       firmware_description: LEDE x86_64
       default_ip: 192.168.15.1
+      autoupdate_source: Lede
+      autoupdate_edition: '23.05'
+      autoupdate_tag: Update-x86
       notify_wechat: true
       notify_telegram: true
     secrets: inherit

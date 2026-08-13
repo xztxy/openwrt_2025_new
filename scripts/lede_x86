@@ -85,4 +85,6 @@ git_sparse_clone master https://github.com/vernesong/OpenClash luci-app-openclas
 # 添加nikki
 git clone --depth=1 -b main https://github.com/nikkinikki-org/OpenWrt-nikki package/OpenWrt-nikki
 #添加定时更新固件功能
-git clone --depth=1 -b main https://github.com/libntdll/luci-app-autoupdate package/luci-app-autoupdate
+git clone --depth=1 https://github.com/xztxy/luci-app-autoupdate package/luci-app-autoupdate
+git -C package/luci-app-autoupdate fetch --depth=1 origin 91894e1a82d7cf226fff429a6b880812ad79e03d
+git -C package/luci-app-autoupdate checkout --detach 91894e1a82d7cf226fff429a6b880812ad79e03d

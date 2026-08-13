@@ -38,6 +38,16 @@ on:
         required: false
         default: '192.168.15.1'
         type: string
+      autoupdate_source:
+        required: true
+        type: string
+      autoupdate_edition:
+        required: true
+        type: string
+      autoupdate_tag:
+        required: false
+        default: 'Update-x86'
+        type: string
       notify_wechat:
         required: false
         default: false
@@ -139,7 +149,6 @@ jobs:
           toolchain: true
           skip: true
           mixkey: ubuntu-24.04-v1-${{ env.SOURCE_REPO }}-${{ inputs.source_branch }}-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
-          prefix: ${{ env.OPENWRT_PATH }}
 
       - name: Prepare feeds
         run: |
@@ -148,14 +157,57 @@ jobs:
           bash "$GITHUB_WORKSPACE/${{ inputs.diy_part1 }}"
           ./scripts/feeds update -a
           ./scripts/feeds install -a
-
       - name: Apply firmware configuration
+        env:
+          AUTOUPDATE_SOURCE: ${{ inputs.autoupdate_source }}
+          AUTOUPDATE_EDITION: ${{ inputs.autoupdate_edition }}
+          AUTOUPDATE_TAG: ${{ inputs.autoupdate_tag }}
         run: |
           set -Eeuo pipefail
           cd "$OPENWRT_PATH"
           cp "$GITHUB_WORKSPACE/${{ inputs.config_file }}" .config
           bash "$GITHUB_WORKSPACE/${{ inputs.diy_part2 }}"
           make defconfig
+
+          compile_date="$(date +'%Y%m%d%H%M')"
+          target_profile="${DEVICE_TARGET}-${DEVICE_SUBTARGET}"
+          current_firmware="${AUTOUPDATE_SOURCE}-${AUTOUPDATE_EDITION}-${target_profile}-${compile_date}"
+          metadata_path="$OPENWRT_PATH/package/base-files/files/etc/openwrt_autoupdate"
+          mkdir -p "$(dirname "$metadata_path")"
+          cat > "$metadata_path" <<EOF
+          GITHUB_REPOSITORY="$GITHUB_REPOSITORY"
+          GITHUB_REPOSITORY_URL="https://github.com/$GITHUB_REPOSITORY"
+          GITHUB_RELEASE_URL="https://github.com/$GITHUB_REPOSITORY/releases/tag/$AUTOUPDATE_TAG"
+          GITHUB_RELEASE_DOWNLOAD_URL="https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG"
+          GITHUB_TAG="$AUTOUPDATE_TAG"
+          GITHUB_API="zzz_api"
+          GITHUB_API_URL_ORIGIN="https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG/zzz_api"
+          GITHUB_API_URL_FASTGIT="https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG/zzz_api"
+          GITHUB_API_URL_GHPROXY="https://ghfast.top/https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG/zzz_api"
+          FRIMWARE_URL_ORIGIN="https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG"
+          FRIMWARE_URL_GHPROXY="https://ghfast.top/https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG"
+          SOURCE="$AUTOUPDATE_SOURCE"
+          TARGET_PROFILE="$target_profile"
+          TARGET_BOARD="$DEVICE_TARGET"
+          TARGET_SUBTARGET="$DEVICE_SUBTARGET"
+          LUCI_EDITION="$AUTOUPDATE_EDITION"
+          COMPILE_DATE="$compile_date"
+          FIRMWARE_EXT=".img.gz"
+          FIRMWARE_BRIEF="${AUTOUPDATE_SOURCE}-${target_profile}-${compile_date}"
+          FIRMWARE_NAME_PREFIX="${AUTOUPDATE_SOURCE}-${AUTOUPDATE_EDITION}-${target_profile}"
+          CURRENT_FIRMWARE="$current_firmware"
+          AUTOUPDATE_VERSION="owned-zzz-api-v1"
+          FILES_TO_DELETE="/etc/default_delete"
+          EOF
+          chmod 0755 "$metadata_path"
+          {
+            printf 'COMPILE_DATE=%s\n' "$compile_date"
+            printf 'TARGET_PROFILE=%s\n' "$target_profile"
+            printf 'CURRENT_FIRMWARE=%s\n' "$current_firmware"
+            printf 'AUTOUPDATE_TAG=%s\n' "$AUTOUPDATE_TAG"
+            printf 'AUTOUPDATE_SOURCE=%s\n' "$AUTOUPDATE_SOURCE"
+            printf 'AUTOUPDATE_EDITION=%s\n' "$AUTOUPDATE_EDITION"
+          } >> "$GITHUB_ENV"
 
       - name: Download source archives
         run: |
@@ -210,6 +262,36 @@ jobs:
           printf 'OUTPUT_DIR=%s\n' "$output_dir" >> "$GITHUB_ENV"
           printf 'output_dir=%s\n' "$output_dir" >> "$GITHUB_OUTPUT"
 
+      - name: Prepare zzz_api update firmware
+        id: autoupdate
+        run: |
+          set -Eeuo pipefail
+          update_dir="$GITHUB_WORKSPACE/outputs/$AUTOUPDATE_TAG"
+          rm -rf "$update_dir"
+          mkdir -p "$update_dir"
+
+          mapfile -d '' update_candidates < <(
+            find "$OPENWRT_PATH/bin/targets" -type f -name '*squashfs-combined*.img.gz' -print0
+          )
+          if [[ "${#update_candidates[@]}" -eq 0 ]]; then
+            echo "No x86 squashfs combined firmware found for zzz_api channel" >&2
+            exit 1
+          fi
+
+          for firmware in "${update_candidates[@]}"; do
+            base_name="$(basename "$firmware")"
+            case "$base_name" in
+              *efi*) boot_type=uefi ;;
+              *) boot_type=legacy ;;
+            esac
+            checksum="$(md5sum "$firmware" | cut -c1-3)$(sha256sum "$firmware" | cut -c1-3)"
+            update_name="${AUTOUPDATE_EDITION}-${AUTOUPDATE_SOURCE}-${TARGET_PROFILE}-${COMPILE_DATE}-${boot_type}-${checksum}.img.gz"
+            cp "$firmware" "$update_dir/$update_name"
+          done
+
+          printf 'AUTOUPDATE_DIR=%s\n' "$update_dir" >> "$GITHUB_ENV"
+          printf 'update_dir=%s\n' "$update_dir" >> "$GITHUB_OUTPUT"
+
       - name: Upload firmware artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -249,6 +331,22 @@ jobs:
             gh release create "$FIRMWARE_TAG" --title "$release_title" --notes "$release_notes"
           fi
           gh release upload "$FIRMWARE_TAG" "$OUTPUT_DIR"/* --clobber
+
+      - name: Publish zzz_api update channel
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          update_notes="OpenWrt online update channel backed by zzz_api."
+          if gh release view "$AUTOUPDATE_TAG" >/dev/null 2>&1; then
+            gh release edit "$AUTOUPDATE_TAG" --title "OpenWrt AutoUpdate x86" --notes "$update_notes"
+          else
+            gh release create "$AUTOUPDATE_TAG" --title "OpenWrt AutoUpdate x86" --notes "$update_notes"
+          fi
+
+          gh release upload "$AUTOUPDATE_TAG" "$AUTOUPDATE_DIR"/* --clobber
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/$AUTOUPDATE_TAG" > "$AUTOUPDATE_DIR/zzz_api"
+          gh release upload "$AUTOUPDATE_TAG" "$AUTOUPDATE_DIR/zzz_api" --clobber
 
       - name: Notify WeCom
         if: success() && inputs.notify_wechat
