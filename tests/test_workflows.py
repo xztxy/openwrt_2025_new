@@ -138,6 +138,7 @@ class WorkflowContractTests(unittest.TestCase):
             "autoupdate_source:",
             "autoupdate_edition:",
             "autoupdate_tag:",
+            "autoupdate_profile:",
         ):
             self.assertIn(required_input, reusable_text)
 
@@ -159,6 +160,10 @@ class WorkflowContractTests(unittest.TestCase):
             reusable_text.index('gh release upload "$AUTOUPDATE_TAG" "$AUTOUPDATE_DIR/zzz_api"'),
         )
         self.assertIn("group: ${{ inputs.autoupdate_tag }}", reusable_text)
+        docker_wrapper = (WORKFLOWS / "immortalwrt-x86-docker-24.10.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("autoupdate_profile: x86-64-docker", docker_wrapper)
 
         expected_channels = {
             "immortalwrt-x86-23.05.yml": ("Immortalwrt", "23.05", "Update-x86"),

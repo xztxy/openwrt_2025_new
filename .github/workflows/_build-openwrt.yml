@@ -44,6 +44,10 @@ on:
       autoupdate_edition:
         required: true
         type: string
+      autoupdate_profile:
+        required: false
+        default: ''
+        type: string
       autoupdate_tag:
         required: false
         default: 'Update-x86'
@@ -163,7 +167,10 @@ jobs:
           make defconfig
 
           compile_date="$(date +'%s')"
-          target_profile="${DEVICE_TARGET}-${DEVICE_SUBTARGET}"
+          target_profile="${{ inputs.autoupdate_profile }}"
+          if [[ -z "$target_profile" ]]; then
+            target_profile="${DEVICE_TARGET}-${DEVICE_SUBTARGET}"
+          fi
           current_firmware="${AUTOUPDATE_SOURCE}-${target_profile}-${compile_date}"
           metadata_path="$OPENWRT_PATH/package/base-files/files/etc/openwrt_update"
           mkdir -p "$(dirname "$metadata_path")"
