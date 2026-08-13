@@ -77,6 +77,12 @@ class WorkflowContractTests(unittest.TestCase):
                 with self.subTest(path=path.name, action=action):
                     self.assertRegex(ref, r"^[0-9a-f]{40}$")
 
+    def test_build_does_not_depend_on_external_openwrt_cache_action(self):
+        reusable_text = (WORKFLOWS / "_build-openwrt.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("HiGarfield/cachewrtbuild", reusable_text)
+
     def test_workflows_use_scoped_permissions_and_builtin_token(self):
         for path in sorted(WORKFLOWS.glob("*.yml")):
             with self.subTest(path=path.name):

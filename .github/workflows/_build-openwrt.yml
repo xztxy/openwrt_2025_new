@@ -142,13 +142,6 @@ jobs:
             printf 'COMMIT_HASH=%s\n' "$(git rev-parse HEAD)"
           } >> "$GITHUB_ENV"
 
-      - name: Restore build cache
-        uses: HiGarfield/cachewrtbuild@3c396d6d42253c392a1c7c2ca996869c3d5b5853
-        with:
-          ccache: true
-          toolchain: true
-          skip: true
-          mixkey: ubuntu-24.04-v1-${{ env.SOURCE_REPO }}-${{ inputs.source_branch }}-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
 
       - name: Prepare feeds
         run: |
