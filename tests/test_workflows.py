@@ -142,14 +142,23 @@ class WorkflowContractTests(unittest.TestCase):
             self.assertIn(required_input, reusable_text)
 
         for required_behavior in (
-            "/etc/openwrt_autoupdate",
-            "GITHUB_API=\"zzz_api\"",
-            "CURRENT_FIRMWARE=",
-            "COMPILE_DATE=",
+            "/etc/openwrt_update",
+            'GITHUB_LINK="https://github.com/$GITHUB_REPOSITORY"',
+            'RELEASE_DOWNLOAD="https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG"',
+            'FIRMWARE_VERSION="$current_firmware"',
+            'TARGET_BOARD="x86"',
+            'DEVICE_MODEL="$target_profile"',
             "Publish zzz_api update channel",
             'gh api "repos/$GITHUB_REPOSITORY/releases/tags/$AUTOUPDATE_TAG"',
         ):
             self.assertIn(required_behavior, reusable_text)
+
+        self.assertNotIn("/etc/openwrt_autoupdate", reusable_text)
+        self.assertLess(
+            reusable_text.index('gh api "repos/$GITHUB_REPOSITORY/releases/tags/$AUTOUPDATE_TAG"'),
+            reusable_text.index('gh release upload "$AUTOUPDATE_TAG" "$AUTOUPDATE_DIR/zzz_api"'),
+        )
+        self.assertIn("group: ${{ inputs.autoupdate_tag }}", reusable_text)
 
         expected_channels = {
             "immortalwrt-x86-23.05.yml": ("Immortalwrt", "23.05", "Update-x86"),
@@ -177,7 +186,7 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertNotIn("github.com/libntdll/luci-app-autoupdate", combined)
         self.assertIn("github.com/xztxy/luci-app-autoupdate", combined)
         self.assertIn("91894e1a82d7cf226fff429a6b880812ad79e03d", combined)
-        self.assertIn('GITHUB_REPOSITORY_URL="https://github.com/$GITHUB_REPOSITORY"', combined)
+        self.assertIn('GITHUB_LINK="https://github.com/$GITHUB_REPOSITORY"', combined)
 
         for config_name in (
             "immortalwrt_23.05_x86.config",

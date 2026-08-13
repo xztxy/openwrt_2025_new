@@ -62,7 +62,7 @@ permissions:
   actions: write
 
 concurrency:
-  group: openwrt-${{ inputs.firmware_tag }}
+  group: ${{ inputs.autoupdate_tag }}
   cancel-in-progress: false
 
 env:
@@ -162,35 +162,21 @@ jobs:
           bash "$GITHUB_WORKSPACE/${{ inputs.diy_part2 }}"
           make defconfig
 
-          compile_date="$(date +'%Y%m%d%H%M')"
+          compile_date="$(date +'%s')"
           target_profile="${DEVICE_TARGET}-${DEVICE_SUBTARGET}"
-          current_firmware="${AUTOUPDATE_SOURCE}-${AUTOUPDATE_EDITION}-${target_profile}-${compile_date}"
-          metadata_path="$OPENWRT_PATH/package/base-files/files/etc/openwrt_autoupdate"
+          current_firmware="${AUTOUPDATE_SOURCE}-${target_profile}-${compile_date}"
+          metadata_path="$OPENWRT_PATH/package/base-files/files/etc/openwrt_update"
           mkdir -p "$(dirname "$metadata_path")"
           cat > "$metadata_path" <<EOF
-          GITHUB_REPOSITORY="$GITHUB_REPOSITORY"
-          GITHUB_REPOSITORY_URL="https://github.com/$GITHUB_REPOSITORY"
-          GITHUB_RELEASE_URL="https://github.com/$GITHUB_REPOSITORY/releases/tag/$AUTOUPDATE_TAG"
-          GITHUB_RELEASE_DOWNLOAD_URL="https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG"
-          GITHUB_TAG="$AUTOUPDATE_TAG"
-          GITHUB_API="zzz_api"
-          GITHUB_API_URL_ORIGIN="https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG/zzz_api"
-          GITHUB_API_URL_FASTGIT="https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG/zzz_api"
-          GITHUB_API_URL_GHPROXY="https://ghfast.top/https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG/zzz_api"
-          FRIMWARE_URL_ORIGIN="https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG"
-          FRIMWARE_URL_GHPROXY="https://ghfast.top/https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG"
+          GITHUB_LINK="https://github.com/$GITHUB_REPOSITORY"
+          GITHUB_PROXY="https://ghfast.top"
+          RELEASE_DOWNLOAD="https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG"
           SOURCE="$AUTOUPDATE_SOURCE"
-          TARGET_PROFILE="$target_profile"
-          TARGET_BOARD="$DEVICE_TARGET"
-          TARGET_SUBTARGET="$DEVICE_SUBTARGET"
           LUCI_EDITION="$AUTOUPDATE_EDITION"
-          COMPILE_DATE="$compile_date"
-          FIRMWARE_EXT=".img.gz"
-          FIRMWARE_BRIEF="${AUTOUPDATE_SOURCE}-${target_profile}-${compile_date}"
-          FIRMWARE_NAME_PREFIX="${AUTOUPDATE_SOURCE}-${AUTOUPDATE_EDITION}-${target_profile}"
-          CURRENT_FIRMWARE="$current_firmware"
-          AUTOUPDATE_VERSION="owned-zzz-api-v1"
-          FILES_TO_DELETE="/etc/default_delete"
+          FIRMWARE_VERSION="$current_firmware"
+          TARGET_BOARD="x86"
+          DEVICE_MODEL="$target_profile"
+          FIRMWARE_SUFFIX=".img.gz"
           EOF
           chmod 0755 "$metadata_path"
           {
@@ -337,7 +323,9 @@ jobs:
             gh release create "$AUTOUPDATE_TAG" --title "OpenWrt AutoUpdate x86" --notes "$update_notes"
           fi
 
+          rm -f "$AUTOUPDATE_DIR/zzz_api"
           gh release upload "$AUTOUPDATE_TAG" "$AUTOUPDATE_DIR"/* --clobber
+          gh release delete-asset "$AUTOUPDATE_TAG" zzz_api --yes >/dev/null 2>&1 || true
           gh api "repos/$GITHUB_REPOSITORY/releases/tags/$AUTOUPDATE_TAG" > "$AUTOUPDATE_DIR/zzz_api"
           gh release upload "$AUTOUPDATE_TAG" "$AUTOUPDATE_DIR/zzz_api" --clobber
 
