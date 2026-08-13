@@ -326,7 +326,7 @@ jobs:
           rm -f "$AUTOUPDATE_DIR/zzz_api"
           gh release upload "$AUTOUPDATE_TAG" "$AUTOUPDATE_DIR"/* --clobber
           gh release delete-asset "$AUTOUPDATE_TAG" zzz_api --yes >/dev/null 2>&1 || true
-          gh api "repos/$GITHUB_REPOSITORY/releases/tags/$AUTOUPDATE_TAG" > "$AUTOUPDATE_DIR/zzz_api"
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/$AUTOUPDATE_TAG" | python3 -m json.tool > "$AUTOUPDATE_DIR/zzz_api"
           gh release upload "$AUTOUPDATE_TAG" "$AUTOUPDATE_DIR/zzz_api" --clobber
 
       - name: Notify WeCom

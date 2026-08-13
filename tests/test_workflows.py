@@ -149,7 +149,7 @@ class WorkflowContractTests(unittest.TestCase):
             'TARGET_BOARD="x86"',
             'DEVICE_MODEL="$target_profile"',
             "Publish zzz_api update channel",
-            'gh api "repos/$GITHUB_REPOSITORY/releases/tags/$AUTOUPDATE_TAG"',
+            'gh api "repos/$GITHUB_REPOSITORY/releases/tags/$AUTOUPDATE_TAG" | python3 -m json.tool',
         ):
             self.assertIn(required_behavior, reusable_text)
 
