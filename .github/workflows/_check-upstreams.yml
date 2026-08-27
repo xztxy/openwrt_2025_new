@@ -120,7 +120,7 @@ jobs:
 
               duplicate_run="$(
                 gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs?per_page=100" \
-                  --jq ".workflow_runs[] | select((.status == \"queued\" or .status == \"in_progress\") and (.display_title | endswith(\"[$target:$FINGERPRINT]\"))) | .id" |
+                  --jq ".workflow_runs[] | select((.status == \"queued\" or .status == \"in_progress\" or .status == \"pending\" or .status == \"waiting\" or .status == \"requested\") and (.display_title | endswith(\"[$target:$FINGERPRINT]\"))) | .id" |
                   sed -n '1p'
               )"
               if [[ -n "$duplicate_run" ]]; then

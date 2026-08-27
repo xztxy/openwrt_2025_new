@@ -222,6 +222,9 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn("display_title", reusable)
         self.assertIn("queued", reusable)
         self.assertIn("in_progress", reusable)
+        self.assertIn("pending", reusable)
+        self.assertIn("waiting", reusable)
+        self.assertIn("requested", reusable)
         self.assertNotIn("git tag", reusable)
 
         expected = {
