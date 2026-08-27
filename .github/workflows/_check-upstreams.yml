@@ -74,7 +74,7 @@ jobs:
           fi
 
           LC_ALL=C sort -u "$state_file" -o "$state_file"
-          fingerprint="$(sha256sum "$state_file" | cut -d ' ' -f1)"
+          read -r fingerprint _ < <(sha256sum "$state_file")
           {
             echo "### Upstream fingerprint"
             echo
