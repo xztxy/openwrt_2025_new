@@ -12,10 +12,13 @@ permissions:
 
 jobs:
   build:
+    if: github.event_name == 'workflow_dispatch' || github.event.client_payload.target == 'lede-x86'
     uses: ./.github/workflows/_build-openwrt.yml
     with:
       source_url: https://github.com/coolsnowwolf/lede
       source_branch: master
+      source_commit: ${{ github.event.client_payload.source_commit }}
+      build_fingerprint: ${{ github.event.client_payload.fingerprint }}
       target_board: x86
       target_subtarget: '64'
       config_file: configs/lede_x86.config
@@ -27,7 +30,7 @@ jobs:
       default_ip: 192.168.15.1
       autoupdate_source: Lede
       autoupdate_edition: '23.05'
-      autoupdate_tag: Update-x86
+      autoupdate_tag: Update-lede-x86
       notify_wechat: true
       notify_telegram: true
     secrets: inherit

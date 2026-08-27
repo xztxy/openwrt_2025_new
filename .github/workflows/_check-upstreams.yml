@@ -1,0 +1,132 @@
+name: Reusable Upstream Checker
+
+on:
+  workflow_call:
+    inputs:
+      primary_ref:
+        required: true
+        type: string
+      upstream_refs:
+        required: true
+        type: string
+      build_targets:
+        required: true
+        type: string
+      force_build:
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Resolve upstream fingerprint
+        id: upstream
+        env:
+          PRIMARY_REF: ${{ inputs.primary_ref }}
+          UPSTREAM_REFS: ${{ inputs.upstream_refs }}
+        run: |
+          set -Eeuo pipefail
+          state_file="$(mktemp)"
+          printf 'configuration:%s\t%s\n' "$GITHUB_REPOSITORY" "$GITHUB_SHA" > "$state_file"
+          primary_commit=""
+
+          while IFS= read -r upstream_ref; do
+            [[ -z "$upstream_ref" || "$upstream_ref" == \#* ]] && continue
+            repository="${upstream_ref%%:*}"
+            branch="${upstream_ref#*:}"
+            if [[ -z "$repository" || -z "$branch" || "$repository" == "$branch" ]]; then
+              echo "Invalid upstream reference: $upstream_ref" >&2
+              exit 1
+            fi
+
+            commit_hash=""
+            for attempt in 1 2 3; do
+              commit_hash="$(
+                git ls-remote "https://github.com/${repository}.git" "refs/heads/${branch}" |
+                  awk 'NR == 1 { print $1 }'
+              )"
+              [[ "$commit_hash" =~ ^[0-9a-f]{40}$ ]] && break
+              echo "Unable to resolve $upstream_ref (attempt $attempt/3)" >&2
+              sleep "$attempt"
+            done
+            if [[ ! "$commit_hash" =~ ^[0-9a-f]{40}$ ]]; then
+              echo "Unable to resolve upstream reference: $upstream_ref" >&2
+              exit 1
+            fi
+
+            printf '%s\t%s\n' "$upstream_ref" "$commit_hash" >> "$state_file"
+            if [[ "$upstream_ref" == "$PRIMARY_REF" ]]; then
+              primary_commit="$commit_hash"
+            fi
+          done <<< "$UPSTREAM_REFS"
+
+          if [[ ! "$primary_commit" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "Primary reference was not resolved: $PRIMARY_REF" >&2
+            exit 1
+          fi
+
+          LC_ALL=C sort -u "$state_file" -o "$state_file"
+          fingerprint="$(sha256sum "$state_file" | awk '{ print $1 }')"
+          {
+            echo "### Upstream fingerprint"
+            echo
+            echo "- Primary commit: \`$primary_commit\`"
+            echo "- Combined fingerprint: \`$fingerprint\`"
+            echo
+            echo '| Source | Commit |'
+            echo '| --- | --- |'
+            while IFS=$'\t' read -r upstream_ref commit_hash; do
+              printf '| `%s` | `%s` |\n' "$upstream_ref" "$commit_hash"
+            done < "$state_file"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          printf 'source_commit=%s\n' "$primary_commit" >> "$GITHUB_OUTPUT"
+          printf 'fingerprint=%s\n' "$fingerprint" >> "$GITHUB_OUTPUT"
+
+      - name: Dispatch missing builds
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_TARGETS: ${{ inputs.build_targets }}
+          FORCE_BUILD: ${{ inputs.force_build }}
+          SOURCE_COMMIT: ${{ steps.upstream.outputs.source_commit }}
+          FINGERPRINT: ${{ steps.upstream.outputs.fingerprint }}
+        run: |
+          set -Eeuo pipefail
+          dispatched=0
+
+          while IFS='|' read -r target event_type; do
+            [[ -z "$target" || "$target" == \#* ]] && continue
+            if [[ -z "$event_type" ]]; then
+              echo "Invalid build target entry: $target" >&2
+              exit 1
+            fi
+
+            state_ref="refs/tags/build-state/${target}/${FINGERPRINT}"
+            if [[ "$FORCE_BUILD" != "true" ]] &&
+              git ls-remote --exit-code \
+                "https://github.com/${GITHUB_REPOSITORY}.git" "$state_ref" \
+                >/dev/null 2>&1; then
+              echo "$target already built for $FINGERPRINT"
+              continue
+            fi
+
+            echo "Dispatching $target for $FINGERPRINT"
+            gh api --method POST "repos/$GITHUB_REPOSITORY/dispatches" \
+              -f event_type="$event_type" \
+              -F "client_payload[target]=$target" \
+              -F "client_payload[source_commit]=$SOURCE_COMMIT" \
+              -F "client_payload[fingerprint]=$FINGERPRINT"
+            dispatched=$((dispatched + 1))
+          done <<< "$BUILD_TARGETS"
+
+          if (( dispatched == 0 )); then
+            echo "Every target is already built for the current upstream fingerprint"
+          fi

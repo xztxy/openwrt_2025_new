@@ -2,11 +2,11 @@ name: Update Checker ImmortalWrt
 
 on:
   schedule:
-    - cron: '0 12 * * *'
+    - cron: '47 */6 * * *'
   workflow_dispatch:
     inputs:
       force_build:
-        description: Trigger a build even when the source commit is unchanged
+        description: Trigger builds even when the current upstream fingerprint succeeded
         required: false
         default: false
         type: boolean
@@ -15,48 +15,34 @@ permissions:
   contents: write
   actions: write
 
-env:
-  SOURCE_URL: https://github.com/immortalwrt/immortalwrt
-  SOURCE_BRANCH: openwrt-24.10
-  CACHE_SCOPE: immortalwrt-openwrt-24.10
-  DISPATCH_EVENT: immortalwrt-updated
-
 jobs:
   check:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-
-    steps:
-      - name: Read upstream commit
-        id: source
-        run: |
-          set -Eeuo pipefail
-          commit_hash="$(git ls-remote "$SOURCE_URL" "refs/heads/$SOURCE_BRANCH" | awk 'NR == 1 { print $1 }')"
-          if [[ -z "$commit_hash" ]]; then
-            echo "Unable to resolve $SOURCE_URL branch $SOURCE_BRANCH" >&2
-            exit 1
-          fi
-          mkdir -p .upstream-state
-          printf '%s\n' "$commit_hash" > ".upstream-state/$CACHE_SCOPE"
-          printf 'hash=%s\n' "$commit_hash" >> "$GITHUB_OUTPUT"
-
-      - name: Restore upstream state
-        id: upstream-cache
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .upstream-state/${{ env.CACHE_SCOPE }}
-          key: upstream-${{ env.CACHE_SCOPE }}-${{ steps.source.outputs.hash }}
-
-      - name: Trigger firmware build
-        if: steps.upstream-cache.outputs.cache-hit != 'true' || inputs.force_build
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -Eeuo pipefail
-          gh api --method POST "repos/$GITHUB_REPOSITORY/dispatches" \
-            -f event_type="$DISPATCH_EVENT" \
-            -F "client_payload[source_commit]=${{ steps.source.outputs.hash }}"
-
-      - name: Report unchanged source
-        if: steps.upstream-cache.outputs.cache-hit == 'true' && !inputs.force_build
-        run: echo "No upstream change detected"
+    uses: ./.github/workflows/_check-upstreams.yml
+    with:
+      primary_ref: immortalwrt/immortalwrt:openwrt-24.10
+      upstream_refs: |
+        immortalwrt/immortalwrt:openwrt-24.10
+        immortalwrt/packages:openwrt-24.10
+        immortalwrt/luci:openwrt-24.10
+        openwrt/routing:openwrt-24.10
+        openwrt/telephony:openwrt-24.10
+        xztxy/New_lede_bianyi:main
+        jerrykuku/luci-theme-argon:master
+        jerrykuku/luci-app-argon-config:master
+        sirpdboy/luci-theme-kucat:master
+        sirpdboy/luci-app-kucat-config:master
+        peditx/luci-theme-peditx:main
+        gdy666/luci-app-lucky:main
+        sirpdboy/luci-app-advanced:master
+        sirpdboy/luci-app-autotimeset:main
+        sirpdboy/luci-app-poweroffdevice:master
+        nikkinikki-org/OpenWrt-nikki:main
+        linkease/istore-ui:main
+        linkease/istore:main
+        Openwrt-Passwall/openwrt-passwall-packages:main
+        Openwrt-Passwall/openwrt-passwall:main
+        x-wrt/com.x-wrt:master
+      build_targets: |
+        immortalwrt-24.10-x86|immortalwrt-updated
+        immortalwrt-24.10-docker-x86|immortalwrt-docker-updated
+      force_build: ${{ inputs.force_build || false }}

@@ -9,6 +9,14 @@ on:
       source_branch:
         required: true
         type: string
+      source_commit:
+        required: false
+        default: ''
+        type: string
+      build_fingerprint:
+        required: false
+        default: ''
+        type: string
       target_board:
         required: true
         type: string
@@ -123,11 +131,28 @@ jobs:
         env:
           SOURCE_URL: ${{ inputs.source_url }}
           SOURCE_BRANCH: ${{ inputs.source_branch }}
+          SOURCE_COMMIT: ${{ inputs.source_commit }}
         run: |
           set -Eeuo pipefail
-          git clone --depth 1 --branch "$SOURCE_BRANCH" --single-branch "$SOURCE_URL" openwrt
-          ln -s /workdir/openwrt "$GITHUB_WORKSPACE/openwrt"
-          cd openwrt
+          if [[ -n "$SOURCE_COMMIT" ]]; then
+            if [[ ! "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+              echo "Invalid source commit: $SOURCE_COMMIT" >&2
+              exit 1
+            fi
+            git clone --filter=blob:none --no-checkout "$SOURCE_URL" openwrt
+            cd openwrt
+            git fetch --depth 1 origin "$SOURCE_COMMIT"
+            git checkout --detach "$SOURCE_COMMIT"
+          else
+            git clone --depth 1 --branch "$SOURCE_BRANCH" --single-branch "$SOURCE_URL" openwrt
+            cd openwrt
+          fi
+
+          if [[ -n "$SOURCE_COMMIT" && "$(git rev-parse HEAD)" != "$SOURCE_COMMIT" ]]; then
+            echo "Checked out commit does not match requested source commit" >&2
+            exit 1
+          fi
+          ln -s "$PWD" "$GITHUB_WORKSPACE/openwrt"
 
           source_repo="${SOURCE_URL##*/}"
           source_repo="${source_repo%.git}"
@@ -335,6 +360,22 @@ jobs:
           gh release delete-asset "$AUTOUPDATE_TAG" zzz_api --yes >/dev/null 2>&1 || true
           gh api "repos/$GITHUB_REPOSITORY/releases/tags/$AUTOUPDATE_TAG" | python3 -m json.tool > "$AUTOUPDATE_DIR/zzz_api"
           gh release upload "$AUTOUPDATE_TAG" "$AUTOUPDATE_DIR/zzz_api" --clobber
+
+      - name: Record successful upstream build
+        if: inputs.build_fingerprint != ''
+        env:
+          BUILD_FINGERPRINT: ${{ inputs.build_fingerprint }}
+          BUILD_STATE_SCOPE: ${{ inputs.firmware_tag }}
+        run: |
+          set -Eeuo pipefail
+          if [[ ! "$BUILD_FINGERPRINT" =~ ^[0-9a-f]{64}$ ]]; then
+            echo "Invalid build fingerprint: $BUILD_FINGERPRINT" >&2
+            exit 1
+          fi
+          state_ref="refs/tags/build-state/${BUILD_STATE_SCOPE}/${BUILD_FINGERPRINT}"
+          state_tag="${state_ref#refs/tags/}"
+          git tag -f "$state_tag" "$GITHUB_SHA"
+          git push origin "refs/tags/$state_tag" --force
 
       - name: Notify WeCom
         if: success() && inputs.notify_wechat

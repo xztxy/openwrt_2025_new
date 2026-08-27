@@ -166,10 +166,10 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn("autoupdate_profile: x86-64-docker", docker_wrapper)
 
         expected_channels = {
-            "immortalwrt-x86-23.05.yml": ("Immortalwrt", "23.05", "Update-x86"),
-            "immortalwrt-x86-24.10.yml": ("Immortalwrt", "24.10", "Update-x86"),
-            "immortalwrt-x86-docker-24.10.yml": ("Immortalwrt", "24.10", "Update-x86"),
-            "lede-x86-Openwrt.yml": ("Lede", "23.05", "Update-x86"),
+            "immortalwrt-x86-23.05.yml": ("Immortalwrt", "23.05", "Update-immortalwrt-23.05-x86"),
+            "immortalwrt-x86-24.10.yml": ("Immortalwrt", "24.10", "Update-immortalwrt-24.10-x86"),
+            "immortalwrt-x86-docker-24.10.yml": ("Immortalwrt", "24.10", "Update-immortalwrt-24.10-docker-x86"),
+            "lede-x86-Openwrt.yml": ("Lede", "23.05", "Update-lede-x86"),
         }
         for name, (source, edition, tag) in expected_channels.items():
             with self.subTest(workflow=name):
@@ -201,6 +201,103 @@ class WorkflowContractTests(unittest.TestCase):
         ):
             config = (ROOT / "configs" / config_name).read_text(encoding="utf-8")
             self.assertIn("CONFIG_PACKAGE_luci-app-autoupdate=y", config)
+
+    def test_upstream_checkers_track_source_and_plugin_fingerprints(self):
+        reusable = (WORKFLOWS / "_check-upstreams.yml").read_text(
+            encoding="utf-8"
+        )
+        for required in (
+            "primary_ref:",
+            "upstream_refs:",
+            "build_targets:",
+            "fingerprint=",
+            "refs/tags/build-state/",
+            "client_payload[source_commit]",
+            "client_payload[fingerprint]",
+            "client_payload[target]",
+        ):
+            self.assertIn(required, reusable)
+        self.assertNotIn("actions/cache", reusable)
+        self.assertNotIn("git tag", reusable)
+
+        expected = {
+            "Update Checker_lede.yml": (
+                ("coolsnowwolf/lede:master", "fw876/helloworld:master"),
+                ("lede-x86|lede-updated",),
+            ),
+            "Update Checker_immortalwrt.yml": (
+                (
+                    "immortalwrt/immortalwrt:openwrt-24.10",
+                    "Openwrt-Passwall/openwrt-passwall:main",
+                ),
+                (
+                    "immortalwrt-24.10-x86|immortalwrt-updated",
+                    "immortalwrt-24.10-docker-x86|immortalwrt-docker-updated",
+                ),
+            ),
+        }
+        for workflow_name, (tracked_refs, targets) in expected.items():
+            with self.subTest(workflow=workflow_name):
+                text = (WORKFLOWS / workflow_name).read_text(encoding="utf-8")
+                self.assertIn("uses: ./.github/workflows/_check-upstreams.yml", text)
+                for tracked_ref in tracked_refs:
+                    self.assertIn(tracked_ref, text)
+                for target in targets:
+                    self.assertIn(target, text)
+
+    def test_builds_checkout_detected_commit_and_record_success(self):
+        reusable_text = (WORKFLOWS / "_build-openwrt.yml").read_text(
+            encoding="utf-8"
+        )
+        for required in (
+            "source_commit:",
+            "build_fingerprint:",
+            'git fetch --depth 1 origin "$SOURCE_COMMIT"',
+            'git checkout --detach "$SOURCE_COMMIT"',
+            "Record successful upstream build",
+            "refs/tags/build-state/",
+            'git tag -f "$state_tag" "$GITHUB_SHA"',
+            'git push origin "refs/tags/$state_tag" --force',
+        ):
+            self.assertIn(required, reusable_text)
+
+        self.assertLess(
+            reusable_text.index("Publish zzz_api update channel"),
+            reusable_text.index("Record successful upstream build"),
+        )
+
+    def test_only_supported_targets_receive_automatic_dispatches(self):
+        lede = (WORKFLOWS / "lede-x86-Openwrt.yml").read_text(encoding="utf-8")
+        standard = (WORKFLOWS / "immortalwrt-x86-24.10.yml").read_text(
+            encoding="utf-8"
+        )
+        docker = (WORKFLOWS / "immortalwrt-x86-docker-24.10.yml").read_text(
+            encoding="utf-8"
+        )
+        legacy = (WORKFLOWS / "immortalwrt-x86-23.05.yml").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("repository_dispatch", lede)
+        self.assertIn("github.event.client_payload.target == 'lede-x86'", lede)
+        self.assertIn("repository_dispatch", standard)
+        self.assertIn(
+            "github.event.client_payload.target == 'immortalwrt-24.10-x86'",
+            standard,
+        )
+        self.assertIn("repository_dispatch", docker)
+        self.assertIn(
+            "github.event.client_payload.target == 'immortalwrt-24.10-docker-x86'",
+            docker,
+        )
+        self.assertNotIn("repository_dispatch", legacy)
+
+        for text in (lede, standard, docker):
+            self.assertIn("source_commit: ${{ github.event.client_payload.source_commit }}", text)
+            self.assertIn(
+                "build_fingerprint: ${{ github.event.client_payload.fingerprint }}",
+                text,
+            )
 
     def test_lede_preserves_local_router_function_packages(self):
         config = (ROOT / "configs" / "lede_x86.config").read_text(

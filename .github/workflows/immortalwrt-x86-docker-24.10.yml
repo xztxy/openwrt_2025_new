@@ -1,6 +1,9 @@
 name: immortalwrt-24.10-docker-x86
 
 on:
+  repository_dispatch:
+    types:
+      - immortalwrt-docker-updated
   workflow_dispatch:
 
 permissions:
@@ -9,10 +12,13 @@ permissions:
 
 jobs:
   build:
+    if: github.event_name == 'workflow_dispatch' || github.event.client_payload.target == 'immortalwrt-24.10-docker-x86'
     uses: ./.github/workflows/_build-openwrt.yml
     with:
       source_url: https://github.com/immortalwrt/immortalwrt
       source_branch: openwrt-24.10
+      source_commit: ${{ github.event.client_payload.source_commit }}
+      build_fingerprint: ${{ github.event.client_payload.fingerprint }}
       target_board: x86
       target_subtarget: '64'
       config_file: configs/immortalwrt_24.10_docker_x86.config
@@ -25,7 +31,7 @@ jobs:
       autoupdate_source: Immortalwrt
       autoupdate_edition: '24.10'
       autoupdate_profile: x86-64-docker
-      autoupdate_tag: Update-x86
+      autoupdate_tag: Update-immortalwrt-24.10-docker-x86
       notify_wechat: false
       notify_telegram: false
     secrets: inherit

@@ -24,7 +24,7 @@ jobs:
       default_ip: 192.168.15.1
       autoupdate_source: Immortalwrt
       autoupdate_edition: '23.05'
-      autoupdate_tag: Update-x86
+      autoupdate_tag: Update-immortalwrt-23.05-x86
       notify_wechat: false
       notify_telegram: false
     secrets: inherit
