@@ -84,7 +84,7 @@ jobs:
             echo '| Source | Commit |'
             echo '| --- | --- |'
             while IFS=$'\t' read -r upstream_ref commit_hash; do
-              printf '| `%s` | `%s` |\n' "$upstream_ref" "$commit_hash"
+              printf "| \`%s\` | \`%s\` |\n" "$upstream_ref" "$commit_hash"
             done < "$state_file"
           } >> "$GITHUB_STEP_SUMMARY"
 
