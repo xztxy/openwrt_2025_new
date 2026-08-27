@@ -135,8 +135,8 @@ class WorkflowContractTests(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertIn("999-cross-compile-no-host-binaries.patch", script)
-        self.assertIn('TARGET_GOOS="${GOOS:-$(go env GOOS)}"', script)
-        self.assertIn('TARGET_GOARCH="${GOARCH:-$(go env GOARCH)}"', script)
+        self.assertIn('"${CC:-}" == *openwrt*', script)
+        self.assertNotIn('TARGET_GOOS="${GOOS:-$(go env GOOS)}"', script)
 
     def test_autoupdate_build_contract_uses_owned_zzz_api_channel(self):
         reusable_text = (WORKFLOWS / "_build-openwrt.yml").read_text(

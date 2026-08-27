@@ -31,11 +31,10 @@ if [[ -f "$dockerd_makefile" ]]; then
   cat > "$dockerd_patch_dir/999-cross-compile-no-host-binaries.patch" <<'PATCH'
 --- a/hack/make/binary-daemon
 +++ b/hack/make/binary-daemon
-@@ -10 +10,3 @@ copy_binaries() {
+@@ -10 +10,2 @@ copy_binaries() {
 -	if [ "$(go env GOOS)/$(go env GOARCH)" != "$(go env GOHOSTOS)/$(go env GOHOSTARCH)" ]; then
-+	TARGET_GOOS="${GOOS:-$(go env GOOS)}"
-+	TARGET_GOARCH="${GOARCH:-$(go env GOARCH)}"
-+	if [ "$TARGET_GOOS/$TARGET_GOARCH" != "$(go env GOHOSTOS)/$(go env GOHOSTARCH)" ]; then
++	# OpenWrt sets a target cross-compiler even when GOOS/GOARCH equals the host.
++	if [[ "${CC:-}" == *openwrt* ]] || [ "$(go env GOOS)/$(go env GOARCH)" != "$(go env GOHOSTOS)/$(go env GOHOSTARCH)" ]; then
 PATCH
 fi
 ##### Git稀疏克隆
