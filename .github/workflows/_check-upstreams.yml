@@ -51,7 +51,7 @@ jobs:
             for attempt in 1 2 3; do
               commit_hash="$(
                 git ls-remote "https://github.com/${repository}.git" "refs/heads/${branch}" |
-                  awk 'NR == 1 { print $1 }'
+                  cut -f1
               )"
               [[ "$commit_hash" =~ ^[0-9a-f]{40}$ ]] && break
               echo "Unable to resolve $upstream_ref (attempt $attempt/3)" >&2
@@ -74,7 +74,7 @@ jobs:
           fi
 
           LC_ALL=C sort -u "$state_file" -o "$state_file"
-          fingerprint="$(sha256sum "$state_file" | awk '{ print $1 }')"
+          fingerprint="$(sha256sum "$state_file" | cut -d ' ' -f1)"
           {
             echo "### Upstream fingerprint"
             echo
