@@ -110,12 +110,23 @@ jobs:
             fi
 
             state_ref="refs/tags/build-state/${target}/${FINGERPRINT}"
-            if [[ "$FORCE_BUILD" != "true" ]] &&
-              git ls-remote --exit-code \
+            if [[ "$FORCE_BUILD" != "true" ]]; then
+              if git ls-remote --exit-code \
                 "https://github.com/${GITHUB_REPOSITORY}.git" "$state_ref" \
                 >/dev/null 2>&1; then
-              echo "$target already built for $FINGERPRINT"
-              continue
+                echo "$target already built for $FINGERPRINT"
+                continue
+              fi
+
+              duplicate_run="$(
+                gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs?per_page=100" \
+                  --jq ".workflow_runs[] | select((.status == \"queued\" or .status == \"in_progress\") and (.display_title | endswith(\"[$target:$FINGERPRINT]\"))) | .id" |
+                  sed -n '1p'
+              )"
+              if [[ -n "$duplicate_run" ]]; then
+                echo "$target already queued or running for $FINGERPRINT (run $duplicate_run)"
+                continue
+              fi
             fi
 
             echo "Dispatching $target for $FINGERPRINT"

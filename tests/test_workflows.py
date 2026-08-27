@@ -218,6 +218,9 @@ class WorkflowContractTests(unittest.TestCase):
         ):
             self.assertIn(required, reusable)
         self.assertNotIn("actions/cache", reusable)
+        self.assertIn("display_title", reusable)
+        self.assertIn("queued", reusable)
+        self.assertIn("in_progress", reusable)
         self.assertNotIn("git tag", reusable)
 
         expected = {
@@ -296,6 +299,10 @@ class WorkflowContractTests(unittest.TestCase):
             self.assertIn("source_commit: ${{ github.event.client_payload.source_commit }}", text)
             self.assertIn(
                 "build_fingerprint: ${{ github.event.client_payload.fingerprint }}",
+                text,
+            )
+            self.assertIn(
+                "${{ github.event.client_payload.fingerprint || github.run_id }}",
                 text,
             )
 

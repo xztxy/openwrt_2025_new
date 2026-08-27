@@ -1,4 +1,5 @@
 name: lede-x86-OpenWrt
+run-name: lede-x86-OpenWrt [lede-x86:${{ github.event.client_payload.fingerprint || github.run_id }}]
 
 on:
   repository_dispatch:

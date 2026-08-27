@@ -1,4 +1,5 @@
 name: immortalwrt-24.10-x86
+run-name: immortalwrt-24.10-x86 [immortalwrt-24.10-x86:${{ github.event.client_payload.fingerprint || github.run_id }}]
 
 on:
   repository_dispatch:
