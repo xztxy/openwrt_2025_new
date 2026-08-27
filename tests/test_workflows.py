@@ -211,7 +211,8 @@ class WorkflowContractTests(unittest.TestCase):
             "upstream_refs:",
             "build_targets:",
             "fingerprint=",
-            "refs/tags/build-state/",
+            "releases/tags/",
+            "build-state-",
             "client_payload[source_commit]",
             "client_payload[fingerprint]",
             "client_payload[target]",
@@ -226,7 +227,7 @@ class WorkflowContractTests(unittest.TestCase):
         expected = {
             "Update Checker_lede.yml": (
                 ("coolsnowwolf/lede:master", "fw876/helloworld:master"),
-                ("lede-x86|lede-updated",),
+                ("lede-x86|lede-updated|Update-lede-x86",),
             ),
             "Update Checker_immortalwrt.yml": (
                 (
@@ -234,8 +235,8 @@ class WorkflowContractTests(unittest.TestCase):
                     "Openwrt-Passwall/openwrt-passwall:main",
                 ),
                 (
-                    "immortalwrt-24.10-x86|immortalwrt-updated",
-                    "immortalwrt-24.10-docker-x86|immortalwrt-docker-updated",
+                    "immortalwrt-24.10-x86|immortalwrt-updated|Update-immortalwrt-24.10-x86",
+                    "immortalwrt-24.10-docker-x86|immortalwrt-docker-updated|Update-immortalwrt-24.10-docker-x86",
                 ),
             ),
         }
@@ -258,9 +259,8 @@ class WorkflowContractTests(unittest.TestCase):
             'git fetch --depth 1 origin "$SOURCE_COMMIT"',
             'git checkout --detach "$SOURCE_COMMIT"',
             "Record successful upstream build",
-            "refs/tags/build-state/",
-            'git tag -f "$state_tag" "$GITHUB_SHA"',
-            'git push origin "refs/tags/$state_tag" --force',
+            "build-state-",
+            'gh release upload "$AUTOUPDATE_TAG" "$state_file" --clobber',
         ):
             self.assertIn(required, reusable_text)
 

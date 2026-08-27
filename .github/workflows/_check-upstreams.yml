@@ -102,18 +102,18 @@ jobs:
           set -Eeuo pipefail
           dispatched=0
 
-          while IFS='|' read -r target event_type; do
+          while IFS='|' read -r target event_type state_release; do
             [[ -z "$target" || "$target" == \#* ]] && continue
-            if [[ -z "$event_type" ]]; then
+            if [[ -z "$event_type" || -z "$state_release" ]]; then
               echo "Invalid build target entry: $target" >&2
               exit 1
             fi
 
-            state_ref="refs/tags/build-state/${target}/${FINGERPRINT}"
+            state_asset="build-state-${FINGERPRINT}"
             if [[ "$FORCE_BUILD" != "true" ]]; then
-              if git ls-remote --exit-code \
-                "https://github.com/${GITHUB_REPOSITORY}.git" "$state_ref" \
-                >/dev/null 2>&1; then
+              if gh api "repos/$GITHUB_REPOSITORY/releases/tags/$state_release" \
+                --jq ".assets[] | select(.name == \"$state_asset\") | .id" 2>/dev/null |
+                sed -n '1p' | grep -q .; then
                 echo "$target already built for $FINGERPRINT"
                 continue
               fi
@@ -134,7 +134,8 @@ jobs:
               -f event_type="$event_type" \
               -F "client_payload[target]=$target" \
               -F "client_payload[source_commit]=$SOURCE_COMMIT" \
-              -F "client_payload[fingerprint]=$FINGERPRINT"
+              -F "client_payload[fingerprint]=$FINGERPRINT" \
+              -F "client_payload[state_release]=$state_release"
             dispatched=$((dispatched + 1))
           done <<< "$BUILD_TARGETS"
 

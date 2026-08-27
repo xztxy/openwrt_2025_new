@@ -19,6 +19,7 @@ jobs:
       source_url: https://github.com/immortalwrt/immortalwrt
       source_branch: openwrt-24.10
       source_commit: ${{ github.event.client_payload.source_commit }}
+      build_state_release: ${{ github.event.client_payload.state_release }}
       build_fingerprint: ${{ github.event.client_payload.fingerprint }}
       target_board: x86
       target_subtarget: '64'

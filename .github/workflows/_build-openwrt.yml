@@ -17,6 +17,10 @@ on:
         required: false
         default: ''
         type: string
+      build_state_release:
+        required: false
+        default: ''
+        type: string
       target_board:
         required: true
         type: string
@@ -364,18 +368,23 @@ jobs:
       - name: Record successful upstream build
         if: inputs.build_fingerprint != ''
         env:
+          GH_TOKEN: ${{ github.token }}
           BUILD_FINGERPRINT: ${{ inputs.build_fingerprint }}
-          BUILD_STATE_SCOPE: ${{ inputs.firmware_tag }}
+          BUILD_STATE_RELEASE: ${{ inputs.build_state_release }}
+          AUTOUPDATE_TAG: ${{ inputs.autoupdate_tag }}
         run: |
           set -Eeuo pipefail
           if [[ ! "$BUILD_FINGERPRINT" =~ ^[0-9a-f]{64}$ ]]; then
             echo "Invalid build fingerprint: $BUILD_FINGERPRINT" >&2
             exit 1
           fi
-          state_ref="refs/tags/build-state/${BUILD_STATE_SCOPE}/${BUILD_FINGERPRINT}"
-          state_tag="${state_ref#refs/tags/}"
-          git tag -f "$state_tag" "$GITHUB_SHA"
-          git push origin "refs/tags/$state_tag" --force
+          if [[ -n "$BUILD_STATE_RELEASE" && "$BUILD_STATE_RELEASE" != "$AUTOUPDATE_TAG" ]]; then
+            echo "Unexpected build state release: $BUILD_STATE_RELEASE" >&2
+            exit 1
+          fi
+          state_file="$RUNNER_TEMP/build-state-$BUILD_FINGERPRINT"
+          printf '%s\n' "$BUILD_FINGERPRINT" > "$state_file"
+          gh release upload "$AUTOUPDATE_TAG" "$state_file" --clobber
 
       - name: Notify WeCom
         if: success() && inputs.notify_wechat

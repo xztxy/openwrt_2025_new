@@ -48,5 +48,5 @@ jobs:
         vernesong/OpenClash:master
         nikkinikki-org/OpenWrt-nikki:main
       build_targets: |
-        lede-x86|lede-updated
+        lede-x86|lede-updated|Update-lede-x86
       force_build: ${{ inputs.force_build || false }}
