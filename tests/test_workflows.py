@@ -202,6 +202,27 @@ class WorkflowContractTests(unittest.TestCase):
             config = (ROOT / "configs" / config_name).read_text(encoding="utf-8")
             self.assertIn("CONFIG_PACKAGE_luci-app-autoupdate=y", config)
 
+    def test_lede_preserves_local_router_function_packages(self):
+        config = (ROOT / "configs" / "lede_x86.config").read_text(
+            encoding="utf-8"
+        )
+        required_packages = (
+            "6rd",
+            "6to4",
+            "btrfs-progs",
+            "kmod-fs-btrfs",
+            "luci-app-filemanager",
+            "luci-i18n-filemanager-zh-cn",
+            "mihomo-meta",
+            "openssh-sftp-server",
+            "snmpd",
+        )
+        for package in required_packages:
+            with self.subTest(package=package):
+                self.assertIn(f"CONFIG_PACKAGE_{package}=y", config)
+
+        self.assertNotIn("CONFIG_PACKAGE_auto-scripts=y", config)
+
     def test_notifications_are_best_effort_and_accept_full_wecom_urls(self):
         reusable_text = (WORKFLOWS / "_build-openwrt.yml").read_text(
             encoding="utf-8"
