@@ -20,6 +20,15 @@ jobs:
     uses: ./.github/workflows/_check-upstreams.yml
     with:
       primary_ref: immortalwrt/immortalwrt:openwrt-24.10
+      configuration_paths: |
+        .github/workflows/_build-openwrt.yml
+        .github/workflows/immortalwrt-x86-24.10.yml
+        .github/workflows/immortalwrt-x86-docker-24.10.yml
+        configs/immortalwrt_24.10_x86.config
+        configs/immortalwrt_24.10_docker_x86.config
+        depends_ubuntu_2404
+        scripts/immortalwrt_24.10_x86.sh
+        scripts/sh/immortalwrt_diy-part1.sh
       upstream_refs: |
         immortalwrt/immortalwrt:openwrt-24.10
         immortalwrt/packages:openwrt-24.10

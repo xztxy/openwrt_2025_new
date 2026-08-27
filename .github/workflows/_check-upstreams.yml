@@ -12,6 +12,9 @@ on:
       build_targets:
         required: true
         type: string
+      configuration_paths:
+        required: true
+        type: string
       force_build:
         required: false
         default: false
@@ -27,16 +30,34 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - name: Checkout build configuration
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
       - name: Resolve upstream fingerprint
         id: upstream
         env:
           PRIMARY_REF: ${{ inputs.primary_ref }}
           UPSTREAM_REFS: ${{ inputs.upstream_refs }}
+          CONFIGURATION_PATHS: ${{ inputs.configuration_paths }}
         run: |
           set -Eeuo pipefail
           state_file="$(mktemp)"
-          printf 'configuration:%s\t%s\n' "$GITHUB_REPOSITORY" "$GITHUB_SHA" > "$state_file"
           primary_commit=""
+
+          while IFS= read -r configuration_path; do
+            [[ -z "$configuration_path" || "$configuration_path" == \#* ]] && continue
+            matched=0
+            while IFS= read -r tracked_file; do
+              [[ -z "$tracked_file" ]] && continue
+              read -r file_hash _ < <(sha256sum "$tracked_file")
+              printf 'configuration:%s\t%s\n' "$tracked_file" "$file_hash" >> "$state_file"
+              matched=1
+            done < <(git ls-files -- "$configuration_path")
+            if (( matched == 0 )); then
+              echo "Configuration path matched no tracked files: $configuration_path" >&2
+              exit 1
+            fi
+          done <<< "$CONFIGURATION_PATHS"
 
           while IFS= read -r upstream_ref; do
             [[ -z "$upstream_ref" || "$upstream_ref" == \#* ]] && continue

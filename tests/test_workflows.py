@@ -210,6 +210,7 @@ class WorkflowContractTests(unittest.TestCase):
             "primary_ref:",
             "upstream_refs:",
             "build_targets:",
+            "configuration_paths:",
             "fingerprint=",
             "releases/tags/",
             "build-state-",
@@ -226,11 +227,13 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn("waiting", reusable)
         self.assertIn("requested", reusable)
         self.assertNotIn("git tag", reusable)
+        self.assertNotIn('"$GITHUB_SHA" > "$state_file"', reusable)
 
         expected = {
             "Update Checker_lede.yml": (
                 ("coolsnowwolf/lede:master", "fw876/helloworld:master"),
                 ("lede-x86|lede-updated|Update-lede-x86",),
+                ("configs/lede_x86.config", "scripts/lede_x86"),
             ),
             "Update Checker_immortalwrt.yml": (
                 (
@@ -241,9 +244,13 @@ class WorkflowContractTests(unittest.TestCase):
                     "immortalwrt-24.10-x86|immortalwrt-updated|Update-immortalwrt-24.10-x86",
                     "immortalwrt-24.10-docker-x86|immortalwrt-docker-updated|Update-immortalwrt-24.10-docker-x86",
                 ),
+                (
+                    "configs/immortalwrt_24.10_x86.config",
+                    "configs/immortalwrt_24.10_docker_x86.config",
+                ),
             ),
         }
-        for workflow_name, (tracked_refs, targets) in expected.items():
+        for workflow_name, (tracked_refs, targets, configuration_paths) in expected.items():
             with self.subTest(workflow=workflow_name):
                 text = (WORKFLOWS / workflow_name).read_text(encoding="utf-8")
                 self.assertIn("uses: ./.github/workflows/_check-upstreams.yml", text)
@@ -251,6 +258,8 @@ class WorkflowContractTests(unittest.TestCase):
                     self.assertIn(tracked_ref, text)
                 for target in targets:
                     self.assertIn(target, text)
+                for configuration_path in configuration_paths:
+                    self.assertIn(configuration_path, text)
 
     def test_builds_checkout_detected_commit_and_record_success(self):
         reusable_text = (WORKFLOWS / "_build-openwrt.yml").read_text(
