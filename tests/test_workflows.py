@@ -130,6 +130,14 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertNotIn("luci-app-bypass", active_script_lines)
         self.assertNotIn("lua-maxminddb", active_script_lines)
 
+    def test_immortalwrt_dockerd_cross_compile_skips_host_binary_copy(self):
+        script = (ROOT / "scripts" / "immortalwrt_24.10_x86.sh").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("999-cross-compile-no-host-binaries.patch", script)
+        self.assertIn('TARGET_GOOS="${GOOS:-$(go env GOOS)}"', script)
+        self.assertIn('TARGET_GOARCH="${GOARCH:-$(go env GOARCH)}"', script)
+
     def test_autoupdate_build_contract_uses_owned_zzz_api_channel(self):
         reusable_text = (WORKFLOWS / "_build-openwrt.yml").read_text(
             encoding="utf-8"

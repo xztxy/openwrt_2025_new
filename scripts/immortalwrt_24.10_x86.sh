@@ -23,6 +23,21 @@ rm -rf feeds/luci/themes/luci-theme-argon
 rm -rf feeds/luci/applications/luci-app-argon-config
 rm -rf feeds/luci/applications/luci-app-passwall
 #rm -rf feeds/luci/applications/luci-app-netdata
+# dockerd 交叉编译时必须根据目标 GOOS/GOARCH 判断，避免复制 Runner 主机二进制
+dockerd_makefile="feeds/packages/utils/dockerd/Makefile"
+if [[ -f "$dockerd_makefile" ]]; then
+  dockerd_patch_dir="$(dirname "$dockerd_makefile")/patches"
+  mkdir -p "$dockerd_patch_dir"
+  cat > "$dockerd_patch_dir/999-cross-compile-no-host-binaries.patch" <<'PATCH'
+--- a/hack/make/binary-daemon
++++ b/hack/make/binary-daemon
+@@ -10 +10,3 @@ copy_binaries() {
+-	if [ "$(go env GOOS)/$(go env GOARCH)" != "$(go env GOHOSTOS)/$(go env GOHOSTARCH)" ]; then
++	TARGET_GOOS="${GOOS:-$(go env GOOS)}"
++	TARGET_GOARCH="${GOARCH:-$(go env GOARCH)}"
++	if [ "$TARGET_GOOS/$TARGET_GOARCH" != "$(go env GOHOSTOS)/$(go env GOHOSTARCH)" ]; then
+PATCH
+fi
 ##### Git稀疏克隆
 # 参数1是分支名, 参数2是仓库地址, 参数3是子目录，同一个仓库下载多个文件夹直接在后面跟文件名或路径，空格分开
 function git_sparse_clone() {
