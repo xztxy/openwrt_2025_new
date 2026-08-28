@@ -52,6 +52,6 @@ jobs:
         Openwrt-Passwall/openwrt-passwall:main
         x-wrt/com.x-wrt:master
       build_targets: |
-        immortalwrt-24.10-x86|immortalwrt-updated|Update-immortalwrt-24.10-x86
-        immortalwrt-24.10-docker-x86|immortalwrt-docker-updated|Update-immortalwrt-24.10-docker-x86
+        immortalwrt-24.10-x86|immortalwrt-updated|Update-immortalwrt-24.10-x86|immortalwrt-x86-24.10.yml
+        immortalwrt-24.10-docker-x86|immortalwrt-docker-updated|Update-immortalwrt-24.10-docker-x86|immortalwrt-x86-docker-24.10.yml
       force_build: ${{ inputs.force_build || false }}

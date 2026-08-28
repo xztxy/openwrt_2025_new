@@ -119,13 +119,14 @@ jobs:
           FORCE_BUILD: ${{ inputs.force_build }}
           SOURCE_COMMIT: ${{ steps.upstream.outputs.source_commit }}
           FINGERPRINT: ${{ steps.upstream.outputs.fingerprint }}
+          MINIMUM_BUILD_INTERVAL_MINUTES: '300'
         run: |
           set -Eeuo pipefail
           dispatched=0
 
-          while IFS='|' read -r target event_type state_release; do
+          while IFS='|' read -r target event_type state_release workflow_file; do
             [[ -z "$target" || "$target" == \#* ]] && continue
-            if [[ -z "$event_type" || -z "$state_release" ]]; then
+            if [[ -z "$event_type" || -z "$state_release" || -z "$workflow_file" ]]; then
               echo "Invalid build target entry: $target" >&2
               exit 1
             fi
@@ -148,6 +149,20 @@ jobs:
                 echo "$target already queued or running for $FINGERPRINT (run $duplicate_run)"
                 continue
               fi
+
+              latest_success_at="$(
+                gh api "repos/$GITHUB_REPOSITORY/actions/workflows/$workflow_file/runs?status=success&per_page=1" \
+                  --jq '.workflow_runs[0].updated_at // empty' 2>/dev/null || true
+              )"
+              if [[ -n "$latest_success_at" ]]; then
+                latest_success_epoch="$(date -u -d "$latest_success_at" +%s)"
+                current_epoch="$(date -u +%s)"
+                minimum_interval_seconds=$((MINIMUM_BUILD_INTERVAL_MINUTES * 60))
+                if (( current_epoch - latest_success_epoch < minimum_interval_seconds )); then
+                  echo "Skipping rebuild during cooldown for $target; latest successful run is $latest_success_at"
+                  continue
+                fi
+              fi
             fi
 
             echo "Dispatching $target for $FINGERPRINT"
@@ -161,5 +176,5 @@ jobs:
           done <<< "$BUILD_TARGETS"
 
           if (( dispatched == 0 )); then
-            echo "Every target is already built for the current upstream fingerprint"
+            echo "Every target is built, active, or inside the rebuild cooldown"
           fi

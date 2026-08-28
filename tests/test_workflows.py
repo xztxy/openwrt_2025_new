@@ -216,6 +216,9 @@ class WorkflowContractTests(unittest.TestCase):
         )
         for required in (
             "primary_ref:",
+            "MINIMUM_BUILD_INTERVAL_MINUTES",
+            "latest_success_epoch",
+            "Skipping rebuild during cooldown",
             "upstream_refs:",
             "build_targets:",
             "configuration_paths:",
@@ -240,7 +243,7 @@ class WorkflowContractTests(unittest.TestCase):
         expected = {
             "Update Checker_lede.yml": (
                 ("coolsnowwolf/lede:master", "fw876/helloworld:master"),
-                ("lede-x86|lede-updated|Update-lede-x86",),
+                ("lede-x86|lede-updated|Update-lede-x86|lede-x86-Openwrt.yml",),
                 ("configs/lede_x86.config", "scripts/lede_x86"),
             ),
             "Update Checker_immortalwrt.yml": (
@@ -249,8 +252,8 @@ class WorkflowContractTests(unittest.TestCase):
                     "Openwrt-Passwall/openwrt-passwall:main",
                 ),
                 (
-                    "immortalwrt-24.10-x86|immortalwrt-updated|Update-immortalwrt-24.10-x86",
-                    "immortalwrt-24.10-docker-x86|immortalwrt-docker-updated|Update-immortalwrt-24.10-docker-x86",
+                    "immortalwrt-24.10-x86|immortalwrt-updated|Update-immortalwrt-24.10-x86|immortalwrt-x86-24.10.yml",
+                    "immortalwrt-24.10-docker-x86|immortalwrt-docker-updated|Update-immortalwrt-24.10-docker-x86|immortalwrt-x86-docker-24.10.yml",
                 ),
                 (
                     "configs/immortalwrt_24.10_x86.config",
