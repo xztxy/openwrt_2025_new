@@ -24,6 +24,8 @@ rm -rf feeds/luci/themes/luci-theme-argon
 rm -rf feeds/luci/applications/luci-app-argon-config
 # 删除英文版netdata
 rm -rf feeds/luci/applications/luci-app-netdata
+# 删除 feeds 中旧版 Nikki，避免其覆盖 package/OpenWrt-nikki 的当前实现
+rm -rf feeds/packages/net/nikki
 
 ###### Git稀疏克隆
 # 参数1是分支名, 参数2是仓库地址, 参数3是子目录，同一个仓库下载多个文件夹直接在后面跟文件名或路径，空格分开

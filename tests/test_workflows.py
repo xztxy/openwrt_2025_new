@@ -138,6 +138,14 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn('"${CC:-}" == *openwrt*', script)
         self.assertNotIn('TARGET_GOOS="${GOOS:-$(go env GOOS)}"', script)
 
+    def test_lede_replaces_stale_feed_nikki_with_current_source(self):
+        script = (ROOT / "scripts" / "lede_x86").read_text(encoding="utf-8")
+        self.assertIn("rm -rf feeds/packages/net/nikki", script)
+        self.assertIn(
+            "git clone --depth=1 -b main https://github.com/nikkinikki-org/OpenWrt-nikki",
+            script,
+        )
+
     def test_autoupdate_build_contract_uses_owned_zzz_api_channel(self):
         reusable_text = (WORKFLOWS / "_build-openwrt.yml").read_text(
             encoding="utf-8"
