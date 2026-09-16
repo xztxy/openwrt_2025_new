@@ -141,9 +141,20 @@ class WorkflowContractTests(unittest.TestCase):
     def test_lede_replaces_stale_feed_nikki_with_current_source(self):
         script = (ROOT / "scripts" / "lede_x86").read_text(encoding="utf-8")
         self.assertIn("rm -rf feeds/packages/net/nikki", script)
+        self.assertIn("rm -rf feeds/luci/applications/luci-app-nikki", script)
+        self.assertIn("rm -rf feeds/helloworld/mihomo", script)
+        self.assertIn("rm -rf package/luci-app-ssr-plus/mihomo", script)
         self.assertIn(
             "git clone --depth=1 -b main https://github.com/nikkinikki-org/OpenWrt-nikki",
             script,
+        )
+        self.assertGreater(
+            script.index("git clone --depth=1 -b master https://github.com/fw876/helloworld package/luci-app-ssr-plus"),
+            script.index("rm -rf feeds/helloworld/mihomo"),
+        )
+        self.assertGreater(
+            script.index("rm -rf package/luci-app-ssr-plus/mihomo"),
+            script.index("git clone --depth=1 -b master https://github.com/fw876/helloworld package/luci-app-ssr-plus"),
         )
 
     def test_autoupdate_build_contract_uses_owned_zzz_api_channel(self):
@@ -355,6 +366,11 @@ class WorkflowContractTests(unittest.TestCase):
         for package in required_packages:
             with self.subTest(package=package):
                 self.assertIn(f"CONFIG_PACKAGE_{package}=y", config)
+        self.assertIn(
+            "# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Mihomo is not set",
+            config,
+        )
+        self.assertNotIn("CONFIG_PACKAGE_mihomo=y", config)
 
         self.assertNotIn("CONFIG_PACKAGE_auto-scripts=y", config)
 
