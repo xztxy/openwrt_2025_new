@@ -142,20 +142,30 @@ class WorkflowContractTests(unittest.TestCase):
         script = (ROOT / "scripts" / "lede_x86").read_text(encoding="utf-8")
         self.assertIn("rm -rf feeds/packages/net/nikki", script)
         self.assertIn("rm -rf feeds/luci/applications/luci-app-nikki", script)
-        self.assertIn("rm -rf feeds/helloworld/mihomo", script)
-        self.assertIn("rm -rf package/luci-app-ssr-plus/mihomo", script)
+        self.assertIn("rm -rf feeds/helloworld", script)
+        self.assertIn("rm -rf feeds/luci/applications/luci-app-ssr-plus", script)
+        self.assertIn("rm -rf feeds/luci/applications/luci-app-passwall", script)
+        self.assertIn("rm -rf feeds/luci/applications/luci-app-openclash", script)
+        self.assertIn("sed -i 's/[ \\t]*luci-app-ssr-plus//g' include/target.mk", script)
         self.assertIn(
             "git clone --depth=1 -b main https://github.com/nikkinikki-org/OpenWrt-nikki",
             script,
         )
-        self.assertGreater(
-            script.index("git clone --depth=1 -b master https://github.com/fw876/helloworld package/luci-app-ssr-plus"),
-            script.index("rm -rf feeds/helloworld/mihomo"),
+        active_lines = "\n".join(
+            line
+            for line in script.splitlines()
+            if not line.lstrip().startswith("#")
         )
-        self.assertGreater(
-            script.index("rm -rf package/luci-app-ssr-plus/mihomo"),
-            script.index("git clone --depth=1 -b master https://github.com/fw876/helloworld package/luci-app-ssr-plus"),
+        self.assertNotIn("github.com/fw876/helloworld", active_lines)
+        self.assertNotIn("github.com/Openwrt-Passwall/openwrt-passwall", active_lines)
+        self.assertNotIn("github.com/vernesong/OpenClash", active_lines)
+        self.assertEqual(
+            active_lines.count(
+                "git clone --depth=1 -b main https://github.com/nikkinikki-org/OpenWrt-nikki package/OpenWrt-nikki"
+            ),
+            1,
         )
+
 
     def test_autoupdate_build_contract_uses_owned_zzz_api_channel(self):
         reusable_text = (WORKFLOWS / "_build-openwrt.yml").read_text(
@@ -261,7 +271,7 @@ class WorkflowContractTests(unittest.TestCase):
 
         expected = {
             "Update Checker_lede.yml": (
-                ("coolsnowwolf/lede:master", "fw876/helloworld:master"),
+                ("coolsnowwolf/lede:master", "nikkinikki-org/OpenWrt-nikki:main"),
                 ("lede-x86|lede-updated|Update-lede-x86|lede-x86-Openwrt.yml",),
                 ("configs/lede_x86.config", "scripts/lede_x86"),
             ),
@@ -366,10 +376,19 @@ class WorkflowContractTests(unittest.TestCase):
         for package in required_packages:
             with self.subTest(package=package):
                 self.assertIn(f"CONFIG_PACKAGE_{package}=y", config)
-        self.assertIn(
-            "# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Mihomo is not set",
-            config,
-        )
+        self.assertIn("CONFIG_PACKAGE_luci-app-nikki=y", config)
+        for disabled in (
+            "luci-app-openclash",
+            "luci-app-passwall",
+            "luci-app-passwall2",
+            "luci-app-ssr-plus",
+            "luci-app-homeproxy",
+            "sing-box",
+            "shadowsocks-libev-ss-local",
+        ):
+            with self.subTest(disabled=disabled):
+                self.assertIn(f"# CONFIG_PACKAGE_{disabled} is not set", config)
+                self.assertNotIn(f"CONFIG_PACKAGE_{disabled}=y", config)
         self.assertNotIn("CONFIG_PACKAGE_mihomo=y", config)
 
         self.assertNotIn("CONFIG_PACKAGE_auto-scripts=y", config)

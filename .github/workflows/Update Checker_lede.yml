@@ -48,11 +48,6 @@ jobs:
         linkease/istore-ui:main
         linkease/istore:main
         x-wrt/com.x-wrt:master
-        fw876/helloworld:master
-        Openwrt-Passwall/openwrt-passwall-packages:main
-        Openwrt-Passwall/openwrt-passwall:main
-        Openwrt-Passwall/openwrt-passwall2:main
-        vernesong/OpenClash:master
         nikkinikki-org/OpenWrt-nikki:main
       build_targets: |
         lede-x86|lede-updated|Update-lede-x86|lede-x86-Openwrt.yml

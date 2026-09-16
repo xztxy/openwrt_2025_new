@@ -24,10 +24,16 @@ rm -rf feeds/luci/themes/luci-theme-argon
 rm -rf feeds/luci/applications/luci-app-argon-config
 # 删除英文版netdata
 rm -rf feeds/luci/applications/luci-app-netdata
-# 删除 feeds 中旧版 Nikki 和冲突的 helloworld mihomo，避免覆盖 package/OpenWrt-nikki
+# 只保留 Nikki：清掉 feeds 中会抢包名或被默认选中的其它科学上网来源
 rm -rf feeds/packages/net/nikki
 rm -rf feeds/luci/applications/luci-app-nikki
-rm -rf feeds/helloworld/mihomo
+rm -rf feeds/helloworld
+rm -rf feeds/luci/applications/luci-app-ssr-plus
+rm -rf feeds/luci/applications/luci-app-passwall
+rm -rf feeds/luci/applications/luci-app-passwall2
+rm -rf feeds/luci/applications/luci-app-openclash
+rm -rf feeds/luci/applications/luci-app-homeproxy
+sed -i 's/[ \t]*luci-app-ssr-plus//g' include/target.mk
 
 ###### Git稀疏克隆
 # 参数1是分支名, 参数2是仓库地址, 参数3是子目录，同一个仓库下载多个文件夹直接在后面跟文件名或路径，空格分开
@@ -79,15 +85,7 @@ git_sparse_clone main https://github.com/linkease/istore luci
 # 添加xwan
 git_sparse_clone master https://github.com/x-wrt/com.x-wrt luci-app-xwan
 
-##### 科学上网插件
-git clone --depth=1 -b master https://github.com/fw876/helloworld package/luci-app-ssr-plus
-rm -rf package/luci-app-ssr-plus/mihomo
-git clone --depth=1 -b main https://github.com/Openwrt-Passwall/openwrt-passwall-packages package/openwrt-passwall
-git clone --depth=1 -b main https://github.com/Openwrt-Passwall/openwrt-passwall package/luci-app-passwall
-git clone --depth=1 -b main https://github.com/Openwrt-Passwall/openwrt-passwall2 package/luci-app-passwall2
-git_sparse_clone master https://github.com/vernesong/OpenClash luci-app-openclash
-
-# 添加nikki
+##### 科学上网插件：仅 Nikki
 git clone --depth=1 -b main https://github.com/nikkinikki-org/OpenWrt-nikki package/OpenWrt-nikki
 #添加定时更新固件功能
 git clone --depth=1 https://github.com/xztxy/luci-app-autoupdate package/luci-app-autoupdate
