@@ -45,8 +45,17 @@ git clone --depth=1 -b main https://github.com/peditx/luci-theme-peditx package/
 ##### 添加额外插件
 # 拉取中文版netdata
 #git clone --depth=1 -b main https://github.com/sirpdboy/luci-app-netdata package/luci-app-netdata
-# 添加Lucky
+# 强制使用最新版 Lucky (清理 feeds 中的老旧 2.17.8 版本)
+rm -rf feeds/packages/net/lucky feeds/luci/applications/luci-app-lucky
+rm -rf package/feeds/packages/lucky package/feeds/luci/luci-app-lucky
 git clone --depth=1 -b main https://github.com/gdy666/luci-app-lucky package/lucky
+# 固件级注入 Lucky 配置升级保留清单 (避免 sysupgrade 升级时丢失 .lkcf 配置数据)
+mkdir -p files/lib/upgrade/keep.d
+cat > files/lib/upgrade/keep.d/lucky << 'EOF'
+/etc/config/lucky
+/etc/lucky
+/etc/config/lucky.daji
+EOF
 # 添加系统高级设置
 git clone --depth=1 -b master https://github.com/sirpdboy/luci-app-advanced package/luci-app-advanced
 # 拉取定时设置
