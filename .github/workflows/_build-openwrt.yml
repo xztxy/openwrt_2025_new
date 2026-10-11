@@ -215,6 +215,27 @@ jobs:
           FIRMWARE_SUFFIX=".img.gz"
           EOF
           chmod 0755 "$metadata_path"
+
+          autoupdate_uci="$OPENWRT_PATH/package/base-files/files/etc/config/autoupdate"
+          mkdir -p "$(dirname "$autoupdate_uci")"
+          cat > "$autoupdate_uci" <<EOF
+config login
+	option enable '0'
+	option forceupdate '0'
+	option week '7'
+	option hour '23'
+	option minute '0'
+	option github 'https://github.com/$GITHUB_REPOSITORY'
+	option github_proxy 'https://ghfast.top'
+	option release_download 'https://github.com/$GITHUB_REPOSITORY/releases/download/$AUTOUPDATE_TAG'
+	option source '$AUTOUPDATE_SOURCE'
+	option luci_edition '$AUTOUPDATE_EDITION'
+	option firmware_version '$current_firmware'
+	option target_board 'x86'
+	option device_model '$target_profile'
+	option firmware_suffix '.img.gz'
+EOF
+          chmod 0644 "$autoupdate_uci"
           {
             printf 'COMPILE_DATE=%s\n' "$compile_date"
             printf 'TARGET_PROFILE=%s\n' "$target_profile"
